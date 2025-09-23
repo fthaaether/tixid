@@ -5,9 +5,7 @@ use App\Http\Controllers\MovieController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 
-Route::get('/', function () {
-    return view('home');
-})->name('home');
+Route::get('/', [MovieController::class, 'home'])->name('home');
 
 Route::get('/schedules/detail', function () {
     // standar penulisan :

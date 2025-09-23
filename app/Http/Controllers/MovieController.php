@@ -14,8 +14,20 @@ class MovieController extends Controller
     public function index()
     {
         // //Model::all() => mengambil semua data dari model
-        $movies = Movie::all();
+        $movies = Movie::all(); // all, tidak mengambil data dengan filter
         return view('admin.movie.index', compact('movies')); //movie nya gapake s karena nama foldermnya juga ga apake s
+    }
+
+    public function home()
+    {
+        // where('field', 'operator', 'value',) : mencari data
+        // operator : = / < / <= / > / >= / <> / !=
+        // orderBy('field', 'ASC/DESC') : mengurutkan data
+        // ASC : a-z, 0-9, terlama-terbaru, DESC : 9-0, z-a, terbaru-terlama
+        // limit(angka) : mengambil hanya beberapa data
+        // get() : ambil hasil proses filter
+        $movies = Movie::where('actived', 1)->orderBy('created_at', 'DESC')->limit(3)->get();
+        return view('home', compact('movies')); //get mengambil data dengan filter
     }
 
     /**
