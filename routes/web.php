@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 
 Route::get('/', [MovieController::class, 'home'])->name('home');
+Route::get('/movies/active', [MovieController::class, 'homeMovies'])->name('home.movies.all');
 
 Route::get('/schedules/detail', function () {
     // standar penulisan :
@@ -55,7 +56,18 @@ Route::middleware('isAdmin')->prefix('/admin')->name('admin.')->group(function (
         Route::get('/', [MovieController::class, 'index'])->name('index');
         Route::get('/create', [MovieController::class, 'create'])->name('create');
         Route::post('/store', [MovieController::class, 'store'])->name('store');
+        Route::get('/edit/{id}', [MovieController::class, 'edit'])->name('edit');
+        Route::put('/update/{id}', [MovieController::class, 'update'])->name('update');
+        Route::delete('/delete/{id}', [MovieController::class, 'destroy'])->name('delete');
+        Route::put('/nonactive/{id}', [MovieController::class, 'nonactive'])->name('nonactive');
     });
+});
+
+Route::prefix('/staff')->name('staff.')->group(function()
+{
+    Route::get('/dashboard', function() {
+        return view('staff.dashboard');
+    })->name('dashboard');
 });
 
 Route::middleware('isGuest')->group(function () {
@@ -76,6 +88,7 @@ Route::middleware('isGuest')->group(function () {
 
     Route::post('/auth', [UserController::class, 'authentication'])->name('auth'); //mau mengirim data makanya menggunakan post
 });
+
 
 
 

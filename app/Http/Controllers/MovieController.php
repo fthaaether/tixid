@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Movie;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
+
 
 class MovieController extends Controller
 {
@@ -30,6 +32,11 @@ class MovieController extends Controller
         return view('home', compact('movies')); //get mengambil data dengan filter
     }
 
+    public function homeMovies()
+    {
+        $movies = Movie::where('actived', 1)->orderBy('created_at', 'DESC')->get();
+        return view('movies', compact('movies'));
+    }
     /**
      * Show the form for creating a new resource.
      */
@@ -103,24 +110,111 @@ class MovieController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Movie $movie)
+    public function edit(Movie $movie, $id)
     {
-        //
+        $movie = Movie::find($id);
+        return view('admin.movie.edit', compact('movie'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Movie $movie)
+    public function update(Request $request, Movie $movie, $id)
     {
-        //
+        $request->validate([
+            'title' => 'required',
+            'duration' => 'required',
+            'genre' => 'required',
+            'director' => 'required',
+            'age_rating' => 'required',
+            // mimes: memastikan ekstensi (jenis file) yang diupload
+            'poster' => 'required|mimes:jpg,jpeg,png,svg,webp',
+            'description' => 'required|min:10',
+        ], [
+            'title.required' => 'Judul film harus diisi',
+            'duration.required' => 'Durasi film harus diisi',
+            'genre.required' => 'Genre film harus diisi',
+            'director.required' => 'Sutradara film harus diisi',
+            'age_rating.required' => 'Usia minimal harus diisi',
+            'poster.required' => 'Poster harus diisi',
+            'poster.mimes' => 'Poster harus berupa JPG/JPEG/PNG/SVG/WEBP',
+            'description.required' => 'Sinopsis harus diisi',
+            'description.min' => 'Sinopsis harus diisi minimal 10 karakter',
+        ]);
+        // ambil data sebelemunya
+        $movie = Movie::find($id);
+
+        // Jika inpur file poster diisi
+        if ($request->hasFile('poster')) {
+            $filePath = storage_path('app/public/' . $movie->poster);
+            // Jika file ada di storage path tersebut
+            if (file_exists($filePath)) {
+                // hapu file lama
+                unlink($filePath);
+            }
+            $file = $request->file('poster');
+            // buat nama baru untuk file
+            $fileName = 'poster-' . Str::random(10) . '.' .
+                $file->getClientOriginalExtension();
+            $path = $file->storeAs('poster', $fileName, 'public');
+        }
+
+        $updateData = $movie->update([
+            'title' => $request->title,
+            'duration' => $request->duration,
+            'genre' => $request->genre,
+            'director' => $request->director,
+            'age_rating' => $request->age_rating,
+            'poster' => $request->hasFile('poster') ? $path :
+                $movie->poster,
+            'description' => $request->description,
+            'actived' => 1
+        ]);
+
+        if ($updateData) {
+            return redirect()->route('admin.movies.index')->with('success', 'Berhasil memperbarui data!');
+        } else {
+            return redirect()->back()->with('error', 'Gagal! silahkan coba lagi.');
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Movie $movie)
+    // public function destroy($id)
+    // {
+    //     Movie::findOrFail($id);
+
+    //     // Hapus file poster dari storage (pakai disk public)
+    //     if($movies->poster && Storage::disk('public')->exists($movies->$poster)) {
+    //         Storage::disk('public')->delete($movies->poster);
+    //     }
+
+    //     // Hapus record dari db
+    //     $movies->delete();
+
+    //     return redirect()->route('admin.movies.index')->with('success', 'Berhasil menghapus film');
+    // }
+
+    public function destroy($id)
     {
-        //
+        $movies = Movie::findOrFail($id);
+        if ($movies->poster && Storage::disk('public')->exists($movies->poster)) {
+            Storage::disk('public')->delete($movies->poster);
+        }
+        $movies->delete();
+        return redirect()->route('admin.movies.index')->with('success', 'Berhasil menghapus data film!');
+    }
+
+    public function nonactive($id)
+    {
+        $movie = Movie::findOrFail($id);
+        $nonActiveData = $movie->update(['actived' => 0]);
+
+        if ($nonActiveData) {
+            return redirect()->back()->with('success', 'Film berhasil di non-aktifkan');
+        } else {
+            return redirect()->back()->with('error', 'Gagal! silahkan coba lagi.');
+        }
     }
 }

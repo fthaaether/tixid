@@ -1,13 +1,9 @@
 <?php
-
 namespace App\Http\Controllers;
-
-
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
-
 class UserController extends Controller
 {
     /**
@@ -67,19 +63,34 @@ class UserController extends Controller
             'password.required' => 'Password harus diisi'
         ]);
         //data yg akan digunakan untuk verifikasi
-        $data = $request->only(['email', 'password']);
-        //Auth::attempt() -> mencocokan data (email-pw / username-pw)
+        // $data = $request->only(['email', 'password']);
+        // //Auth::attempt() -> mencocokan data (email-pw / username-pw)
+        // if (Auth::attempt($data)) {
+        //     //jika data email-pw cocok
+        //     if (Auth::user()->role == 'admin') { {
+        //         //di cek lagi rolenya, selain admin ke dashboard
+        //         return redirect()->route('admin.dashboard')->with('success', 'Berhasil login!');
+        //     } elseif (Auth::user()->role == 'staff') {
+        //         return redirect()->route('staff.dashboard')->with('success', 'Berhasil login!');
+        //     } else {
+        //         //selain admin ke home
+        //         return redirect()->route('home')->with('success', 'Berhasil login');
+        //     }
+        // } else {
+        //     return redirect()->back()->with('error', 'Gagal! pastikan email dan password benar');
+        // }
+
+        $data = $request->only(['password', 'email']);
         if (Auth::attempt($data)) {
-            //jika data email-pw cocok
             if (Auth::user()->role == 'admin') {
-                //di cek lagi rolenya, selain admin ke dashboard
-                return redirect()->route('admin.dashboard')->with('success', 'Berhasil login!');
+                return redirect()->route('admin.dashboard')->with('Success', 'Berhasil Login!');
+            } elseif (Auth::user()->role == 'staff') {
+                return redirect()->route('staff.dashboard')->with('success', 'Berhasil Login!');
             } else {
-                //selain admin ke home
-                return redirect()->route('home')->with('success', 'Berhasil login');
+                return redirect()->route('home')->with('Success', 'Berhasil Login!');
             }
         } else {
-            return redirect()->back()->with('error', 'Gagal! pastikan email dan password benar');
+            return redirect()->back()->with('Error', 'Gagal! Pastikan Email dan Password Benar');
         }
     }
 
@@ -169,16 +180,11 @@ class UserController extends Controller
             'email.email' => 'Email tidak valid',
             'password.min' => 'Password minimal 10 karakter', // gk wajib diisi
         ]);
-
-
         //
         $data = [
             'name' => $request->name,
             'email' => $request->email,
         ];
-
-
-
         //jika password ada isinya hanya meng update password
         if ($request->filled('password')) {
             $data['password'] = Hash::make($request->password);
