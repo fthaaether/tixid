@@ -4,6 +4,7 @@ use App\Http\Controllers\CinemaController;
 use App\Http\Controllers\MovieController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\PromoController;
 
 Route::get('/', [MovieController::class, 'home'])->name('home');
 Route::get('/movies/active', [MovieController::class, 'homeMovies'])->name('home.movies.all');
@@ -60,6 +61,8 @@ Route::middleware('isAdmin')->prefix('/admin')->name('admin.')->group(function (
         Route::put('/update/{id}', [MovieController::class, 'update'])->name('update');
         Route::delete('/delete/{id}', [MovieController::class, 'destroy'])->name('delete');
         Route::put('/nonactive/{id}', [MovieController::class, 'nonactive'])->name('nonactive');
+
+        Route::get('/export', [MovieController::class, 'export'])->name('export');
     });
 });
 
@@ -68,6 +71,15 @@ Route::prefix('/staff')->name('staff.')->group(function()
     Route::get('/dashboard', function() {
         return view('staff.dashboard');
     })->name('dashboard');
+
+    Route::prefix('/promos')->name('promos.')->group(function(){
+        Route::get('/index', [PromoController::class, 'index'])->name('index');
+        Route::get('/create', [PromoController::class, 'create'])->name('create');
+        Route::post('/store', [PromoController::class, 'store'])->name('store');
+        Route::get('/edit/{id}', [PromoController::class, 'edit'])->name('edit');
+        Route::put('/update/{id}', [PromoController::class, 'update'])->name('update');
+        Route::delete('/delete/{id}', [PromoController::class, 'destroy'])->name('delete');
+    });
 });
 
 Route::middleware('isGuest')->group(function () {
@@ -88,10 +100,3 @@ Route::middleware('isGuest')->group(function () {
 
     Route::post('/auth', [UserController::class, 'authentication'])->name('auth'); //mau mengirim data makanya menggunakan post
 });
-
-
-
-
-
-
-

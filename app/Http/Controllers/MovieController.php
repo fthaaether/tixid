@@ -6,7 +6,8 @@ use App\Models\Movie;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
-
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\MovieExport;
 
 class MovieController extends Controller
 {
@@ -204,6 +205,15 @@ class MovieController extends Controller
         }
         $movies->delete();
         return redirect()->route('admin.movies.index')->with('success', 'Berhasil menghapus data film!');
+    }
+
+    public function export()
+    {
+        // nama file yang akan di downloas
+        // ekstensi antara xlsx/csv
+        $fileName = "data-film.xlsx";
+        // prosese download
+        return Excel::download(new MovieExport,$fileName);
     }
 
     public function nonactive($id)

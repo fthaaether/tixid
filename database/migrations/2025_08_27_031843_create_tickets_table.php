@@ -19,7 +19,7 @@ return new class extends Migration {
             $table->integer('quantity');
             $table->integer('total_price');
             $table->date('date');
-            $table->boolean('activated');
+            $table->boolean('actived');
             $table->timestamps();
             $table->softDeletes();
         });

@@ -17,7 +17,7 @@
 
 <body>
 
-    <form class="w-50 d-block mx-auto my-5" method="POST" action="{{ route('signup.send_data') }}">
+    <form class="w-50 d-block mx-auto my-5">
         @if (Session::get('failed'))
             <div class="alert alert-danger my-3">
                 {{ Session::get('failed') }}
