@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\UserExport;
 class UserController extends Controller
 {
     /**
@@ -46,7 +48,7 @@ class UserController extends Controller
 
         ]);
 
-        if ($createData) {
+        if ($createData) { 
             return redirect()->route('login')->with('success', 'Berhasil membuat akun, silahkan login!');
         } else {
             return redirect()->route('signup')->with('failed', 'gagal memproses data!, silahkan coba lagi!');
@@ -210,5 +212,14 @@ class UserController extends Controller
         //
         User::where('id', $id)->delete();
         return redirect()->route('admin.users.index')->with('success', 'Berhasil menghapus data!');
+    }
+
+    public function export()
+    {
+        // nama file yang akan di downloas
+        // ekstensi antara xlsx/csv
+        $fileName = "data-user.xlsx";
+        // prosese download
+        return Excel::download(new UserExport,$fileName);
     }
 }

@@ -81,7 +81,7 @@
         </div>
 
         <!-- Submit button -->
-        <button data-mdb-ripple-init type="submit" class="btn btn-primary btn-block">Log in</button>
+        <button data-mdb-ripple-init type="submit" class="btn btn-primary btn-block">Sign Up</button>
         <div class="text-center mt-3">
             <a href="{{ route('home') }}">Kembali</a>
         </div>

@@ -1,0 +1,38 @@
+<?php
+
+namespace App\Exports;
+use App\Models\Promo;
+use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\WithHeadings; // th
+use Maatwebsite\Excel\Concerns\WithMapping; // td
+
+class PromoExport implements FromCollection, WithHeadings, WithMapping
+{
+    private $key = 0;
+    /**
+    * @return \Illuminate\Support\Collection
+    */
+    public function collection()
+    {
+        // mennetukan data yang akan dimuunculkan di excel
+        return Promo::orderBy('created_at', 'DESC')->get();
+    }
+
+    // menentukan th
+    public function headings(): array{
+        return['No', 'Kode Promo', 'Total Potongan'];
+    }
+
+    // menentukan td
+    public function map($promo): array
+    {
+        // menambahkan $key diatas dari 1 dst
+        return[
+            ++$this->key,
+            $promo->promo_code,
+            $promo->type === 'percent'
+            ? $promo->discount . '%'
+            : 'Rp.' . number_format($promo->discount, 0, ',', '.'),
+        ];
+    }
+}

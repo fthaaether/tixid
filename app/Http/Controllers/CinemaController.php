@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Cinema;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\CinemaExport;
 
 class CinemaController extends Controller
 {
@@ -110,5 +112,14 @@ class CinemaController extends Controller
     {
         Cinema::where('id', $id)->delete();
         return redirect()->route('admin.cinemas.index')->with('success', 'Berhasil menghapus data');
+    }
+
+    public function export()
+    {
+        // nama file yang akan di downloas
+        // ekstensi antara xlsx/csv
+        $fileName = "data-cinema.xlsx";
+        // prosese download
+        return Excel::download(new CinemaExport,$fileName);
     }
 }

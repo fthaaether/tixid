@@ -37,6 +37,8 @@ Route::middleware('isAdmin')->prefix('/admin')->name('admin.')->group(function (
         Route::put('/update{id}', [CinemaController::class, 'update'])->name('update');
         Route::delete('/delete/{id}', [CinemaController::class, 'destroy'])->name('delete');
         // fungsi put mengirimkan data untuk diubah
+
+        Route::get('/export', [CinemaController::class, 'export'])->name('export');
     });
 
     //petugas
@@ -50,6 +52,8 @@ Route::middleware('isAdmin')->prefix('/admin')->name('admin.')->group(function (
         Route::put('/update{id}', [UserController::class, 'update'])->name('update');
         Route::delete('/delete/{id}', [UserController::class, 'destroy'])->name('delete');
         // fungsi put mengirimkan data untuk diubah
+
+        Route::get('/export', [UserController::class, 'export'])->name('export');
     });
 
     //film
@@ -79,6 +83,8 @@ Route::prefix('/staff')->name('staff.')->group(function()
         Route::get('/edit/{id}', [PromoController::class, 'edit'])->name('edit');
         Route::put('/update/{id}', [PromoController::class, 'update'])->name('update');
         Route::delete('/delete/{id}', [PromoController::class, 'destroy'])->name('delete');
+
+        Route::get('/export', [PromoController::class, 'export'])->name('export');
     });
 });
 
