@@ -5,15 +5,13 @@ use App\Http\Controllers\MovieController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PromoController;
+use App\Http\Controllers\ScheduleController;
 
 Route::get('/', [MovieController::class, 'home'])->name('home');
 Route::get('/movies/active', [MovieController::class, 'homeMovies'])->name('home.movies.all');
 
-Route::get('/schedules/detail', function () {
-    // standar penulisan :
-    // path (mengacu ke data/fitur) gunakan jamak, folder view fitur gunakan tunggal
-    return view('schedule.detail');
-})->name('schedules.detail');
+Route::get('/schedules/detail/{movie_id}', [MovieController::class, 'movieSchedule'])
+->name('schedules.detail');
 
 Route::get('/logout', [UserController::class, 'logout'])->name('logout');
 
@@ -70,13 +68,13 @@ Route::middleware('isAdmin')->prefix('/admin')->name('admin.')->group(function (
     });
 });
 
-Route::prefix('/staff')->name('staff.')->group(function()
-{
-    Route::get('/dashboard', function() {
+Route::prefix('/staff')->name('staff.')->group(function () {
+    Route::get('/dashboard', function () {
         return view('staff.dashboard');
     })->name('dashboard');
 
-    Route::prefix('/promos')->name('promos.')->group(function(){
+    // Promo
+    Route::prefix('/promos')->name('promos.')->group(function (): void {
         Route::get('/index', [PromoController::class, 'index'])->name('index');
         Route::get('/create', [PromoController::class, 'create'])->name('create');
         Route::post('/store', [PromoController::class, 'store'])->name('store');
@@ -85,6 +83,12 @@ Route::prefix('/staff')->name('staff.')->group(function()
         Route::delete('/delete/{id}', [PromoController::class, 'destroy'])->name('delete');
 
         Route::get('/export', [PromoController::class, 'export'])->name('export');
+    });
+
+    // Jadwal tayang
+    Route::prefix('/schedules')->name('schedules.')->group(function () {
+        Route::get('/', [ScheduleController::class, 'index'])->name('index');
+        Route::post('/store', [ScheduleController::class, 'store'])->name('store');
     });
 });
 

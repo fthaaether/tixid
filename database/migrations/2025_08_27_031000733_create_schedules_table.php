@@ -15,7 +15,7 @@ return new class extends Migration {
             // FK : $table->foreignId('nama_fk')->constrained ('nama_table')
             $table->foreignId('cinema_id')->constrained('cinemas');
             $table->foreignId('movie_id')->constrained('movies');
-            $table->time('hours');
+            $table->json('hours');
             $table->integer('price');
             $table->timestamps();
             $table->softDeletes();

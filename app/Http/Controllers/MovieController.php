@@ -38,6 +38,17 @@ class MovieController extends Controller
         $movies = Movie::where('actived', 1)->orderBy('created_at', 'DESC')->get();
         return view('movies', compact('movies'));
     }
+
+    public function movieSchedule($movie_id)
+    {
+        // ambil data movie bersama schedule dan cinema
+        // karena cinema adanua relasi dengan schedul ebukan ovie, jadi gunakan schedules.cinema
+        $movie = Movie::where('id', $movie_id)->with(['schedules', 'schedules.cinema'])->first();
+        //schedules : mengambil relasi schedules
+        // schedules.cinema : ambil relasi cinema dari scheudles
+        // first() : karena mau ambil 1 film
+        return view('schedule.detail', compact('movie'));
+    }
     /**
      * Show the form for creating a new resource.
      */
