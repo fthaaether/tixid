@@ -89,7 +89,11 @@ Route::prefix('/staff')->name('staff.')->group(function () {
     Route::prefix('/schedules')->name('schedules.')->group(function () {
         Route::get('/', [ScheduleController::class, 'index'])->name('index');
         Route::post('/store', [ScheduleController::class, 'store'])->name('store');
+        Route::get('/edit/{id}',[ScheduleController::class, 'edit'])->name('edit');
+        Route::patch('/update/{id}', [ScheduleController::class, 'update'])->name('update');
     });
+
+
 });
 
 Route::middleware('isGuest')->group(function () {
@@ -110,3 +114,4 @@ Route::middleware('isGuest')->group(function () {
 
     Route::post('/auth', [UserController::class, 'authentication'])->name('auth'); //mau mengirim data makanya menggunakan post
 });
+
