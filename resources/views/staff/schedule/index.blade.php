@@ -37,7 +37,7 @@
                         </ul>
                     </td>
                     <td class="d-flex">
-                        <a href="" class="btn btn-primary">Edit</a>
+                        <a href="{{ route('staff.schedules.edit', $schedule->id) }}" class="btn btn-primary">Edit</a>
                         <button class="btn btn-danger ms-2">Hapus</button>
                     </td>
                 </tr>

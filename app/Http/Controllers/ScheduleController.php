@@ -101,17 +101,38 @@ class ScheduleController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Schedule $schedule)
+    public function edit(Schedule $schedule, $id)
     {
-        //
+            $schedule = Schedule::where('id', $id)->with(['cinema', 'movie'])->first();
+            return view('staff.schedule.edit', compact('schedule'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Schedule $schedule)
+    public function update(Request $request, Schedule $schedule, $id)
     {
-        //
+        $request->validate([
+            'price' => 'required|numeric',
+            'hours.*' => 'required|date_format:H:i',
+        ], [
+            'price.required' => 'Harga harus diisi',
+            'price.numeric' => 'Harga harus diisi dengan angka',
+            'hours.required' => 'Jam tayang harus diisi',
+            'hours.*.date_format' => 'Jam tayang harus dengan format jam:menit',
+        ]);
+
+        $updateData = Schedule::where('id', $id)->update([
+            'price' => $request->price,
+            'hours' => $request->hours,
+        ]);
+
+        if($updateData) {
+            return redirect()->route('staff.schedules.index')->with('success', 'Berhasil mengubah data!');
+        }
+        else {
+            return redirect()->back()->with('error', 'Gagal! silahkan coba lagi');
+        }
     }
 
     /**
