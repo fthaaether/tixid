@@ -6,7 +6,8 @@ use App\Models\Cinema;
 use App\Models\Movie;
 use App\Models\Schedule;
 use Illuminate\Http\Request;
-
+use App\Exports\ScheduleExport;
+use Maatwebsite\Excel\Facades\Excel;
 class ScheduleController extends Controller
 {
     /**
@@ -143,4 +144,36 @@ class ScheduleController extends Controller
         Schedule::where('id', $id)->delete();
         return redirect()->route('staff.schedules.index')->with('success', 'Berhasil menghapus data!');
     }
+    public function trash()
+    {
+        // onlyTrashed() -> filter darta yang dihapus, delete_at BUKAN NULL
+        $scheduleTrash = Schedule::with(['cinema', 'movie'])->onlyTrashed()->get();
+        return view('staff.schedule.trash', compact('scheduleTrash'));
+    }
+
+    public function restore($id)
+    {
+        $schedule = Schedule::onlyTrashed()->find($id);
+        // restore() -> mengembaliukan data yagn sudah dihapus (menghaps=us nilai tanggal pada delete_at)
+        $schedule->restore();
+        return redirect()->route('staff.schedules.index')->with('success', 'Berhasil mengembalikan data!');
+    }
+
+    public function deletePermanent($id)
+    {
+        $schedule = Schedule::onlyTrashed()->find($id);
+        // forceDelete() -> menghapus dara secara permanen, data hilang bahkan dari db nya
+        $schedule->forceDelete();
+        return redirect()->back()->with('success', 'Berhasil menghapus seutuhnya!');
+    }
+
+    public function export()
+    {
+        // nama file yang akan di downloas
+        // ekstensi antara xlsx/csv
+        $fileName = "data-schedule.xlsx";
+        // prosese download
+        return Excel::download(new ScheduleExport,$fileName);
+    }
 }
+

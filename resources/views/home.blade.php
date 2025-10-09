@@ -8,7 +8,7 @@
         <div class="alert alert-success my-3">{{session::get('Success')}} <b>Selamat datang, {{Auth::user()->name}}</b></div>
         {{-- Auth::user()->name : kata name di ambil dari model user - fillable --}}
     @endif
-
+    
     @if (Session::get('logout'))
         <div class="alert alert-warning">{{session::get('logout')}}</div>
     @endif

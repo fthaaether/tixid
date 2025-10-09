@@ -9,10 +9,7 @@
             <div class="alert alert-danger">{{ Session::get('error') }}</div>
         @endif
         <div class="d-flex justify-content-end">
-            <a href="{{ route('admin.cinemas.trash') }}" class="btn btn-secondary me-2">Data Sampah</a>
-            <a href="{{ route('admin.cinemas.export') }}" class="btn btn-secondary me-2">
-                Export (.xlsx)</a>
-            <a href="{{ route('admin.cinemas.create') }}" class="btn btn-success">Tambah Data</a>
+            <a href="{{ route('admin.cinemas.index') }}" class="btn btn-success">Kembali</a>
         </div>
         <h5 class="mt-3">Data Bioskop</h5>
         <table class="table table-bordered">
@@ -24,7 +21,7 @@
             </tr>
 
             {{-- $cinemas : dari compact, karena pakai all jd array dimensi --}}
-            @foreach ($cinemas as $index => $item)
+            @foreach ($cinemaTrash as $index => $item)
                 <tr>
                     {{-- $index dari 0, biar muncul dr 1 -> +1 --}}
                     <th>{{  $index + 1 }}</th>

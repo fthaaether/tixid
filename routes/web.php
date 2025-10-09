@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PromoController;
 use App\Http\Controllers\ScheduleController;
+use App\Models\Schedule;
 
 Route::get('/', [MovieController::class, 'home'])->name('home');
 Route::get('/movies/active', [MovieController::class, 'homeMovies'])->name('home.movies.all');
@@ -37,6 +38,10 @@ Route::middleware('isAdmin')->prefix('/admin')->name('admin.')->group(function (
         // fungsi put mengirimkan data untuk diubah
 
         Route::get('/export', [CinemaController::class, 'export'])->name('export');
+
+        Route::get('trash', [CinemaController::class, 'trash'])->name('trash');
+        Route::patch('/restore/{id}', [CinemaController::class, 'restore'])->name('restore');
+        Route::delete('/delete-permanent/{id}', [CinemaController::class, 'deletePermanent'])->name('delete_permanent');
     });
 
     //petugas
@@ -65,6 +70,10 @@ Route::middleware('isAdmin')->prefix('/admin')->name('admin.')->group(function (
         Route::put('/nonactive/{id}', [MovieController::class, 'nonactive'])->name('nonactive');
 
         Route::get('/export', [MovieController::class, 'export'])->name('export');
+
+        Route::get('trash', [MovieController::class, 'trash'])->name('trash');
+        Route::patch('/restore/{id}', [MovieController::class, 'restore'])->name('restore');
+        Route::delete('/delete-permanent/{id}', [MovieController::class, 'deletePermanent'])->name('delete_permanent');
     });
 });
 
@@ -83,6 +92,10 @@ Route::prefix('/staff')->name('staff.')->group(function () {
         Route::delete('/delete/{id}', [PromoController::class, 'destroy'])->name('delete');
 
         Route::get('/export', [PromoController::class, 'export'])->name('export');
+
+        Route::get('trash', [PromoController::class, 'trash'])->name('trash');
+        Route::patch('/restore/{id}', [PromoController::class, 'restore'])->name('restore');
+        Route::delete('/delete-permanent/{id}', [PromoController::class, 'deletePermanent'])->name('delete_permanent');
     });
 
     // Jadwal tayang
@@ -92,9 +105,12 @@ Route::prefix('/staff')->name('staff.')->group(function () {
         Route::get('/edit/{id}',[ScheduleController::class, 'edit'])->name('edit');
         Route::patch('/update/{id}', [ScheduleController::class, 'update'])->name('update');
         Route::delete('/delete/{id}', [ScheduleController::class, 'destroy'])->name('delete');
+        Route::get('trash', [ScheduleController::class, 'trash'])->name('trash');
+        Route::patch('/restore/{id}', [ScheduleController::class, 'restore'])->name('restore');
+        Route::delete('/delete-permanent/{id}', [ScheduleController::class, 'deletePermanent'])->name('delete_permanent');
+
+        Route::get('/export', [ScheduleController::class, 'export'])->name('export');
     });
-
-
 });
 
 Route::middleware('isGuest')->group(function () {

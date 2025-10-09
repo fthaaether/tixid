@@ -112,10 +112,8 @@ class CinemaController extends Controller
     public function destroy($id)
     {
 
-        $schedules = Schedule::where('cinema_id', $id)->count();
-        if($schedules) {
-            return redirect()->route('admin.cinemas.index')->with('error', 'Tidak dapat menghapus data bioskop! Data tertaut dengan jadwal tayang');
-        }
+
+        
         
 
 
@@ -130,5 +128,28 @@ class CinemaController extends Controller
         $fileName = "data-cinema.xlsx";
         // prosese download
         return Excel::download(new CinemaExport,$fileName);
+    }
+
+    public function trash()
+    {
+        // onlyTrashed() -> filter darta yang dihapus, delete_at BUKAN NULL
+        $cinemaTrash = Cinema::onlyTrashed()->get();
+        return view('admin.cinema.trash', compact('cinemaTrash'));
+    }
+
+    public function restore($id)
+    {
+        $cinema = Cinema::onlyTrashed()->find($id);
+        // restore() -> mengembaliukan data yagn sudah dihapus (menghaps=us nilai tanggal pada delete_at)
+        $cinema->restore();
+        return redirect()->route('admin.cinema.index')->with('success', 'Berhasil mengembalikan data!');
+    }
+
+    public function deletePermanent($id)
+    {
+        $cinema = Cinema::onlyTrashed()->find($id);
+        // forceDelete() -> menghapus data secara permanen, data hilang bahkan dari db nya
+        $cinema->forceDelete();
+        return redirect()->back()->with('success', 'Berhasil menghapus seutuhnya!');
     }
 }

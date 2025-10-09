@@ -245,4 +245,27 @@ class MovieController extends Controller
             return redirect()->back()->with('error', 'Gagal! silahkan coba lagi.');
         }
     }
+
+    public function trash()
+    {
+        // onlyTrashed() -> filter darta yang dihapus, delete_at BUKAN NULL
+        $movieTrash = Movie::onlyTrashed()->get();
+        return view('admin.movie.trash', compact('movieTrash'));
+    }
+
+    public function restore($id)
+    {
+        $movie = Movie::onlyTrashed()->find($id);
+        // restore() -> mengembaliukan data yagn sudah dihapus (menghaps=us nilai tanggal pada delete_at)
+        $movie->restore();
+        return redirect()->route('admin.movie.index')->with('success', 'Berhasil mengembalikan data!');
+    }
+
+    public function deletePermanent($id)
+    {
+        $movie = Movie::onlyTrashed()->find($id);
+        // forceDelete() -> menghapus data secara permanen, data hilang bahkan dari db nya
+        $movie->forceDelete();
+        return redirect()->back()->with('success', 'Berhasil menghapus seutuhnya!');
+    }
 }

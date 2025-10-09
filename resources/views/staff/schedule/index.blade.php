@@ -3,6 +3,9 @@
 @section('content')
     <div class="container my-5">
         <div class="d-flex justify-content-end">
+            <a href="{{ route('staff.schedules.export') }}" class="btn btn-secondary me-2">
+                Export (.xlsx)</a>
+            <a href="{{ route('staff.schedules.trash') }}" class="btn btn-secondary me-2">Data Sampah</a>
             {{-- menggunakan button karena untuk modal bukan pindah halaman --}}
             <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalAdd">Tambah Data</button>
         </div>
@@ -106,9 +109,9 @@
                             <div class="mb-3">
                                 <label for="hours" class="form-label">Jam Tayang :</label>
                                 <input type="time" name="hours[]" id="hours" class="form-control
-                                    @if ($errors->has('hours.*'))
-                                        is-invalid
-                                    @endif">
+                                        @if ($errors->has('hours.*'))
+                                            is-invalid
+                                        @endif">
                                 {{-- sediakan tempat untuk penambahan input baru dari JS, gunakan id untuk pemanggilan JS
                                 --}}
                                 <div id="aditionalInput"></div>
