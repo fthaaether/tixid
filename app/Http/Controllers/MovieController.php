@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Movie;
+use App\Models\Schedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -210,6 +211,12 @@ class MovieController extends Controller
 
     public function destroy($id)
     {
+
+        $schedules = Schedule::where('movie_id', $id)->count();
+        if($schedules) {
+            return redirect()->route('admin.movies.index')->with('error', 'Tidak dapat menghapus data Film! Data tertaut dengan jadwal tayang');
+        }
+
         $movies = Movie::findOrFail($id);
         if ($movies->poster && Storage::disk('public')->exists($movies->poster)) {
             Storage::disk('public')->delete($movies->poster);

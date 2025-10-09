@@ -38,7 +38,12 @@
                     </td>
                     <td class="d-flex">
                         <a href="{{ route('staff.schedules.edit', $schedule->id) }}" class="btn btn-primary">Edit</a>
-                        <button class="btn btn-danger ms-2">Hapus</button>
+                        <form action="{{ route('staff.schedules.delete', $schedule->id) }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button class="btn btn-danger ms-2">Hapus</button>
+                        </form>
+
                     </td>
                 </tr>
             @endforeach

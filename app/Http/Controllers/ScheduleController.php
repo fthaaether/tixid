@@ -138,8 +138,9 @@ class ScheduleController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Schedule $schedule)
+    public function destroy(Schedule $schedule, $id)
     {
-        //
+        Schedule::where('id', $id)->delete();
+        return redirect()->route('staff.schedules.index')->with('success', 'Berhasil menghapus data!');
     }
 }

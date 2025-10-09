@@ -91,6 +91,7 @@ Route::prefix('/staff')->name('staff.')->group(function () {
         Route::post('/store', [ScheduleController::class, 'store'])->name('store');
         Route::get('/edit/{id}',[ScheduleController::class, 'edit'])->name('edit');
         Route::patch('/update/{id}', [ScheduleController::class, 'update'])->name('update');
+        Route::delete('/delete/{id}', [ScheduleController::class, 'destroy'])->name('delete');
     });
 
 
