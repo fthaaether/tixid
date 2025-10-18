@@ -36,6 +36,14 @@ class MovieController extends Controller
 
     public function homeMovies()
     {
+        // ambil $request dari input search
+        $nameMovie = $request->search_movie;
+        // cek jika input name:"seach_movie" tidak kosong
+        if ($nameMovie != "") {
+            // LIK : mencari dayayang mengandung teks ternetnu
+            // % didepan : menacari kata belakang, % dinelaagn : mecari dara didepan, & didepan belakang : mencari di depan tengah belakang
+            $movies = Movie::where('title', 'LIKE', '%' .$nameMovie. '%')->where('actived', 1)->orderBy('created_at', 'DESC')->get();
+        }
         $movies = Movie::where('actived', 1)->orderBy('created_at', 'DESC')->get();
         return view('movies', compact('movies'));
     }
@@ -218,9 +226,6 @@ class MovieController extends Controller
         }
 
         $movies = Movie::findOrFail($id);
-        if ($movies->poster && Storage::disk('public')->exists($movies->poster)) {
-            Storage::disk('public')->delete($movies->poster);
-        }
         $movies->delete();
         return redirect()->route('admin.movies.index')->with('success', 'Berhasil menghapus data film!');
     }
@@ -248,7 +253,7 @@ class MovieController extends Controller
 
     public function trash()
     {
-        // onlyTrashed() -> filter darta yang dihapus, delete_at BUKAN NULL
+        // onlyTrashed() -> filter data yang dihapus, delete_at BUKAN NULL
         $movieTrash = Movie::onlyTrashed()->get();
         return view('admin.movie.trash', compact('movieTrash'));
     }
@@ -258,14 +263,18 @@ class MovieController extends Controller
         $movie = Movie::onlyTrashed()->find($id);
         // restore() -> mengembaliukan data yagn sudah dihapus (menghaps=us nilai tanggal pada delete_at)
         $movie->restore();
-        return redirect()->route('admin.movie.index')->with('success', 'Berhasil mengembalikan data!');
+        return redirect()->route('admin.movies.index')->with('success', 'Berhasil mengembalikan data!');
     }
 
     public function deletePermanent($id)
     {
         $movie = Movie::onlyTrashed()->find($id);
+        if ($movie->poster && Storage::disk('public')->exists($movie->poster)) {
+            Storage::disk('public')->delete($movie->poster);
+        }
         // forceDelete() -> menghapus data secara permanen, data hilang bahkan dari db nya
         $movie->forceDelete();
+
         return redirect()->back()->with('success', 'Berhasil menghapus seutuhnya!');
     }
 }

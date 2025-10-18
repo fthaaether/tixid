@@ -57,6 +57,10 @@ Route::middleware('isAdmin')->prefix('/admin')->name('admin.')->group(function (
         // fungsi put mengirimkan data untuk diubah
 
         Route::get('/export', [UserController::class, 'export'])->name('export');
+
+        Route::get('trash', [UserController::class, 'trash'])->name('trash');
+        Route::patch('/restore/{id}', [UserController::class, 'restore'])->name('restore');
+        Route::delete('/delete-permanent/{id}', [UserController::class, 'deletePermanent'])->name('delete_permanent');
     });
 
     //film

@@ -7,7 +7,7 @@
             ('success') }}</div>
         @endif
         @if (Session::get('error'))
-            <div class="alert alert-danger">{{ Session::get
+            <div    class="alert alert-danger">{{ Session::get
             ('error') }}</div>
         @endif
         <div class="d-flex justify-content-end">
@@ -29,7 +29,7 @@
                 <tr>
                     <th>{{ $key + 1 }}</th>
                     <th>
-                        <img src="{{ asset('storage/' . $item['poster']) }}" width="120">
+                        <img src="{{ asset('storage/' . $item->poster) }}" width="120">
                     </th>
                     <th>{{ $item['title'] }}</th>
                     <th>

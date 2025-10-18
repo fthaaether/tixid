@@ -41,7 +41,7 @@
                         <form action="{{route('staff.promos.delete_permanent', ['id' => $item['id']])}}" method="POST">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-danger">Hapus</button>
+                            <button type="submit" class="btn btn-danger">Hapus Permanen</button>
                         </form>
                     </th>
                 </tr>

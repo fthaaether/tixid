@@ -20,65 +20,40 @@
                 <th>Poster</th>
                 <th>Judul Film</th>
                 <th>Status Aktif</th>
-                <th>Aktif</th>
+                <th>Aksi</th>
             </tr>
-            @foreach ($movieTrash as $key => $item)
+
+            @foreach ($movieTrash as $index => $item)
                 <tr>
-                    <th>{{ $key + 1 }}</th>
+                    <th>{{  $index + 1 }}</th>
                     <th>
                         <img src="{{ asset('storage/' . $item['poster']) }}" width="120">
                     </th>
                     <th>{{ $item['title'] }}</th>
-                    <th>
+                    <td>
                         @if ($item['actived'] == 1)
-                            <span class="badge badge-success">Aktif</span>
+                        <span class="badge badge-success">Aktif</span>
                         @else
-                            <span class="badge badge-danger">Non Aktif</span>
+                        <span class="badge badge-danger">Non AKtif</span>
+
                         @endif
-                    </th>
+                    </td>
                     <th class="d-flex">
-                        {{-- event (tanda depan on-) JS : menentukan JS nya kapan dibaca--}}
-                        {{-- onclick : menjalankan JS ketika btn di klik --}}
-                        <button class="btn btn-secondary me-2" onclick="showModal({{ $item }})">Detail</button>
-                        <a href="{{ route('admin.movies.edit', $item['id']) }}" class="btn btn-primary me-2">Edit</a>
-                        <form action="{{ route('admin.movies.delete', $item['id']) }}" method="POST"
-                            onsubmit="return confirm('Hapus kan film ini?')">
+                        <form action="{{ route('admin.movies.restore', ['id' => $item['id']]) }}" method="POST">
+                            @csrf
+                            @method('PATCH')
+                            <button type="submit" class="btn btn-success me-2">Kembalikan Data</button>
+                        </form>
+                        <form action="{{ route('admin.movies.delete_permanent', ['id' => $item['id']]) }}" method="POST">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-danger me-2">Hapus</button>
+                            <button type="submit" class="btn btn-danger">Hapus Permanen</button>
                         </form>
-
-                        @if ($item['actived'] == 1)
-                            <form action="{{ route('admin.movies.nonactive', $item->id) }}" method="POST"
-                                onsubmit="return confirm('Nonaktif kan film ini?')">
-                                @csrf
-                                @method('PUT')
-                                <button type="submit" class="btn btn-warning me-2">Non-Aktif Film</button>
-                            </form>
-                        @endif
                     </th>
                 </tr>
             @endforeach
         </table>
 
-        <!-- Modal -->
-        <div class="modal fade" id="modalDetail" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">Detail Film</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body" id="modalDetailBody">
-                        ...
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Save changes</button>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 @endsection
 

@@ -111,12 +111,6 @@ class CinemaController extends Controller
      */
     public function destroy($id)
     {
-
-
-        
-        
-
-
         Cinema::where('id', $id)->delete();
         return redirect()->route('admin.cinemas.index')->with('success', 'Berhasil menghapus data');
     }
@@ -132,7 +126,7 @@ class CinemaController extends Controller
 
     public function trash()
     {
-        // onlyTrashed() -> filter darta yang dihapus, delete_at BUKAN NULL
+        // onlyTrashed() -> filter data yang dihapus, delete_at BUKAN NULL
         $cinemaTrash = Cinema::onlyTrashed()->get();
         return view('admin.cinema.trash', compact('cinemaTrash'));
     }
@@ -140,9 +134,9 @@ class CinemaController extends Controller
     public function restore($id)
     {
         $cinema = Cinema::onlyTrashed()->find($id);
-        // restore() -> mengembaliukan data yagn sudah dihapus (menghaps=us nilai tanggal pada delete_at)
+        // restore() -> mengembalikan data yang sudah dihapus
         $cinema->restore();
-        return redirect()->route('admin.cinema.index')->with('success', 'Berhasil mengembalikan data!');
+        return redirect()->route('admin.cinemas.index')->with('success', 'Berhasil mengembalikan data!');
     }
 
     public function deletePermanent($id)

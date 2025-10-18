@@ -6,10 +6,7 @@
             <div class="alert alert-success">{{ Session::get('success') }}</div>
         @endif
         <div class="d-flex justify-content-end">
-            <a href="{{ route('admin.users.trash') }}" class="btn btn-secondary me-2">Data Sampah</a>
-            <a href="{{ route('admin.users.export') }}" class="btn btn-secondary me-2">
-                Export (.xlsx)</a>
-            <a href="{{ route('admin.users.create') }}" class="btn btn-success">Tambah Data</a>
+            <a href="{{ route('admin.users.index') }}" class="btn btn-secondary">Kembali</a>
         </div>
         <h5 class="mt-3">Data Bioskop</h5>
         <table class="table table-bordered">
@@ -22,7 +19,7 @@
 
             </tr>
             {{-- $users : dari compact, karena pakai all jd array dimensi --}}
-            @foreach ($users as $index => $item)
+            @foreach ($userTrash as $index => $item)
                 <tr>
                     {{-- $index dari 0, biar muncul dr 1 -> +1 --}}
                     <th>{{  $index + 1 }}</th>
@@ -30,22 +27,22 @@
                     <th>{{ $item['name'] }}</th>
                     <th>{{ $item['email'] }}</th>
                     <th>
-                        @if ($item['role'] == 'admin')
+                        @if($item['role'] == 'admin')
                             <span class="alert alert-primary p-1 d-inline-block">admin</span>
-
                         @elseif($item['role'] == 'staff')
                             <span class="alert alert-success p-1 d-inline-block">staff</span>
-
                         @endif
                     </th>
                     <th class="d-flex">
-                        {{-- ['id' => $item['id']] : mengirimkan $item['id'] ke route {id} --}}
-                        <a href="{{ route('admin.users.edit', ['id' => $item['id']])}}" class="btn btn-secondary me-2">Edit</a>
-
-                        <form action="{{ route('admin.users.delete', ['id' => $item['id']]) }}" method="post">
+                        <form action="{{route('admin.users.restore', ['id' => $item['id']])}}" method="POST">
+                            @csrf
+                            @method('PATCH')
+                            <button type="submit" class="btn btn-success me-2">Kembalikan Data</button>
+                        </form>
+                        <form action="{{route('admin.users.delete_permanent', ['id' => $item['id']])}}" method="POST">
                             @csrf
                             @method('DELETE')
-                            <button class="btn btn-danger">Hapus</button>
+                            <button type="submit" class="btn btn-danger">Hapus Permanen</button>
                         </form>
                     </th>
                 </tr>

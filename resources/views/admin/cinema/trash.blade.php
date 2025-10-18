@@ -29,16 +29,17 @@
                     <th>{{ $item['name'] }}</th>
                     <th>{{ $item['location'] }}</th>
                     <th class="d-flex">
-                        {{-- ['id' => $item['id']] : mengirimkan $item['id'] ke route {id} --}}
-                        <a href="{{ route('admin.cinemas.edit', ['id' => $item['id']])}}" class="btn btn-secondary">Edit</a>
 
-                        <form action="{{ route('admin.cinemas.delete', ['id' => $item['id']]) }}" method="post">
+                        <form action="{{ route('admin.cinemas.restore', ['id' => $item['id']]) }}" method="POST">
+                            @csrf
+                            @method('PATCH')
+                            <button type="submit" class="btn btn-success me-2">Kembalikan Data</button>
+                        </form>
+                        <form action="{{ route('admin.cinemas.delete_permanent', ['id' => $item['id']]) }}" method="POST">
                             @csrf
                             @method('DELETE')
-                            <button class="btn btn-danger">Hapus</button>
+                            <button type="submit" class="btn btn-danger">Hapus Permanen</button>
                         </form>
-
-
                     </th>
                 </tr>
             @endforeach

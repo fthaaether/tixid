@@ -33,7 +33,7 @@
                     <th>{{ $item['location'] }}</th>
                     <th class="d-flex">
                         {{-- ['id' => $item['id']] : mengirimkan $item['id'] ke route {id} --}}
-                        <a href="{{ route('admin.cinemas.edit', ['id' => $item['id']])}}" class="btn btn-secondary">Edit</a>
+                        <a href="{{ route('admin.cinemas.edit', ['id' => $item['id']])}}" class="btn btn-secondary me-2">Edit</a>
 
                         <form action="{{ route('admin.cinemas.delete', ['id' => $item['id']]) }}" method="post">
                             @csrf

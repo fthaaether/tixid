@@ -48,7 +48,7 @@ class UserController extends Controller
 
         ]);
 
-        if ($createData) { 
+        if ($createData) {
             return redirect()->route('login')->with('success', 'Berhasil membuat akun, silahkan login!');
         } else {
             return redirect()->route('signup')->with('failed', 'gagal memproses data!, silahkan coba lagi!');
@@ -221,5 +221,28 @@ class UserController extends Controller
         $fileName = "data-user.xlsx";
         // prosese download
         return Excel::download(new UserExport,$fileName);
+    }
+
+    public function trash()
+    {
+        // onlyTrashed() -> filter darta yang dihapus, delete_at BUKAN NULL
+        $userTrash = User::onlyTrashed()->get();
+        return view('admin.user.trash', compact('userTrash'));
+    }
+
+    public function restore($id)
+    {
+        $user = User::onlyTrashed()->find($id);
+        // restore() -> mengembaliukan data yagn sudah dihapus (menghaps=us nilai tanggal pada delete_at)
+        $user->restore();
+        return redirect()->route('admin.users.index')->with('success', 'Berhasil mengembalikan data!');
+    }
+
+    public function deletePermanent($id)
+    {
+        $user = User::onlyTrashed()->find($id);
+        // forceDelete() -> menghapus data secara permanen, data hilang bahkan dari db nya
+        $user->forceDelete();
+        return redirect()->back()->with('success', 'Berhasil menghapus seutuhnya!');
     }
 }
