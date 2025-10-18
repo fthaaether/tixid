@@ -10,9 +10,7 @@ class Schedule extends Model
     use SoftDeletes;
 
     protected $fillable = ['cinema_id', 'movie_id', 'hours', 'price'];
-
     // casts : memastikn format data
-
     protected function casts() : array {
         return [
             // mengubah format json migration hours jad array
