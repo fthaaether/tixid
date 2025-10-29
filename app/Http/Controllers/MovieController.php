@@ -34,7 +34,7 @@ class MovieController extends Controller
         return view('home', compact('movies')); //get mengambil data dengan filter
     }
 
-    public function homeMovies( request $request)
+    public function homeMovies(request $request)
     {
         // ambil $request dari input search
         $nameMovie = $request->search_movie;
@@ -42,22 +42,48 @@ class MovieController extends Controller
         if ($nameMovie != "") {
             // LIK : mencari dayayang mengandung teks ternetnu
             // % didepan : menacari kata belakang, % dinelaagn : mecari dara didepan, & didepan belakang : mencari di depan tengah belakang
-            $movies = Movie::where('title', 'LIKE', '%' .$nameMovie. '%')->where('actived', 1)->orderBy('created_at', 'DESC')->get();
+            $movies = Movie::where('title', 'LIKE', '%' . $nameMovie . '%')->where('actived', 1)->orderBy('created_at', 'DESC')->get();
             // LIKE AGAR SAAT MENCARI TIDAK HARUS 100% SAMA
             // where orderby (eloquent) yang berhubungan middleware
-                    }
+        }
         $movies = Movie::where('actived', 1)->orderBy('created_at', 'DESC')->get();
         return view('movies', compact('movies'));
     }
 
-    public function movieSchedule($movie_id)
+    public function movieSchedule($movie_id, Request $request)
     {
+        $sortPrice = $request->sort_price;
+
+        if ($sortPrice) {
+            $movie = Movie::where('id', $movie_id)->with([
+                'schedules' => function ($q) use ($sortPrice) {
+                    // karna mau mengurutkan price, price di shcedules. schedules itu ada di relasi jadi gunakan fungsi anonim
+                    // $q : query eloquent, mewakilkan model relasi (model Schedule)
+                    $q->orderBy('price', $sortPrice);
+                },'schedules.cinema'])->first();
+        } else {
+            $movie = Movie::where('id', $movie_id)->with(['schedules', 'schedules.cinema'])->first();
+        }
         // ambil data movie bersama schedule dan cinema
         // karena cinema adanua relasi dengan schedul ebukan ovie, jadi gunakan schedules.cinema
-        $movie = Movie::where('id', $movie_id)->with(['schedules', 'schedules.cinema'])->first();
-        //schedules : mengambil relasi schedules
         // schedules.cinema : ambil relasi cinema dari scheudles
         // first() : karena mau ambil 1 film
+
+        $sortAlfabet = $request->sort_alfabet;
+        if ($sortAlfabet == 'ASC') {
+            // sort_alfabet akan mengurutkan dari name yang ada do domce,a. Pada $movie cinema ada di relasi
+            // 'schedules.cinema' posisi cinema sebagai relasi kedua. gunakan collection $movie untuk melakukan filter di relasi kedua
+            $movie->schedules = $movie->schedules->sortBy(function($schedule) {
+                return $schedule->cinema->name;
+                // movie->schedules : collection (data dari varable $movie bagian relasi schedules)
+                // sortBy : mengurutkan ASC dari collection, $shceudle : mewakilkan data schedule
+            })->values(); //values() : mengambil ulang data collection yang udah di filter
+        } elseif ($sortAlfabet == 'DESC') {
+            $movie->schedules = $movie->schedules->sortByDesc(function($schedule) {
+                return $schedule->cinema->name; //diurutkan berdasarkan data ini
+            })->values();
+            //sortByDesc : mengurutkan DESC dari collection
+        }
         return view('schedule.detail', compact('movie'));
     }
     /**
@@ -223,7 +249,7 @@ class MovieController extends Controller
     {
 
         $schedules = Schedule::where('movie_id', $id)->count();
-        if($schedules) {
+        if ($schedules) {
             return redirect()->route('admin.movies.index')->with('error', 'Tidak dapat menghapus data Film! Data tertaut dengan jadwal tayang');
         }
 
@@ -238,7 +264,7 @@ class MovieController extends Controller
         // ekstensi antara xlsx/csv
         $fileName = "data-film.xlsx";
         // prosese download
-        return Excel::download(new MovieExport,$fileName);
+        return Excel::download(new MovieExport, $fileName);
     }
 
     public function nonactive($id)

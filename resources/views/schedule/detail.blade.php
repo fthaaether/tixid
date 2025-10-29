@@ -68,14 +68,37 @@
                             @endforeach
                         </ul>
                     </div>
+                    @php
+                        // request()->get('name_query') : memanggil query params (?) di url
+                        // jika ? nilainya ASC ubah jadi DESC
+                        if (request()->get('sort_price') == 'ASC') {
+                            $sortPrice = 'DESC';
+                        } elseif (request()->get('sort_price') == 'DESC') {
+                            // jika query params sort_price DESC, ubah jadi ASC
+                            $sortPrice = 'ASC';
+                        } else {
+                            // pertama kali klik sort, ASC
+                            $sortPrice = 'ASC';
+                        }
+
+                        if (request()->get('sort_alfabet') == 'ASC') {
+                            $sortAlfabet = 'DESC';
+                        } elseif (request()->get('sort_alfabet') == 'DESC') {
+                            // jika query params sort_alfabet DESC, ubah jadi ASC
+                            $sortAlfabet = 'ASC';
+                        } else {
+                            // pertama kali klik sort, ASC
+                            $sortAlfabet = 'ASC';
+                        }
+                    @endphp
                     <div class="dropdown">
                         <button class="btn btn-light w-100 text-start dropdown-toggle" type="button" id="dropdownMenuButton"
                             data-mdb-dropdown-init data-mdb-ripple-init aria-expanded="false">
                             Sortir
                         </button>
                         <ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton">
-                            <li><a href="sort_price=ASC">Alphabet</a></li>
-                            <li><a href="">Harga</a></li>
+                            <li><a href="?sort_alfabet={{  $sortAlfabet }}">Alphabet</a></li>
+                            <li><a href="?sort_price={{  $sortPrice }}">Harga</a></li>
                         </ul>
                     </div>
                 </div>
@@ -92,13 +115,14 @@
                             </div>
 
                             {{-- kiri --}}
-                        <div class="">
-                            <b>Rp. {{ number_format($schedule['price'], 0, ',', '.') }}</b>
+                            <div class="">
+                                <b>Rp. {{ number_format($schedule['price'], 0, ',', '.') }}</b>
+                            </div>
                         </div>
-                        </div>
+
                         <div class="d-flex gap-3 ps-3 my-2">
                             @foreach ($schedule['hours'] as $hours)
-                                <div class="btn btn-outline -secondary">{{ $hours }}</div>
+                                <div class="btn btn-outline-secondary">{{ $hours }}</div>
                             @endforeach
                         </div>
                     </div>
