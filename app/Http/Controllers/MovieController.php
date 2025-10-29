@@ -34,7 +34,7 @@ class MovieController extends Controller
         return view('home', compact('movies')); //get mengambil data dengan filter
     }
 
-    public function homeMovies()
+    public function homeMovies( request $request)
     {
         // ambil $request dari input search
         $nameMovie = $request->search_movie;
@@ -43,7 +43,9 @@ class MovieController extends Controller
             // LIK : mencari dayayang mengandung teks ternetnu
             // % didepan : menacari kata belakang, % dinelaagn : mecari dara didepan, & didepan belakang : mencari di depan tengah belakang
             $movies = Movie::where('title', 'LIKE', '%' .$nameMovie. '%')->where('actived', 1)->orderBy('created_at', 'DESC')->get();
-        }
+            // LIKE AGAR SAAT MENCARI TIDAK HARUS 100% SAMA
+            // where orderby (eloquent) yang berhubungan middleware
+                    }
         $movies = Movie::where('actived', 1)->orderBy('created_at', 'DESC')->get();
         return view('movies', compact('movies'));
     }

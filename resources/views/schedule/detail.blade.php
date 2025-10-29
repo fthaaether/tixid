@@ -74,11 +74,8 @@
                             Sortir
                         </button>
                         <ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton">
-                            <li><a class="dropdown-item" href="#">Jakarta</a></li>
-                            <li><a class="dropdown-item" href="#">Bogor</a></li>
-                            <li><a class="dropdown-item" href="#">Depok</a></li>
-                            <li><a class="dropdown-item" href="#">Tangerang</a></li>
-                            <li><a class="dropdown-item" href="#">Bekasi</a></li>
+                            <li><a href="sort_price=ASC">Alphabet</a></li>
+                            <li><a href="">Harga</a></li>
                         </ul>
                     </div>
                 </div>
@@ -86,9 +83,19 @@
             <div class="mb-5">
                 @foreach ($movie['schedules'] as $schedule)
                     <div class="w-100 my-3">
-                        <i class="fa-solid fa-building"></i><b class="ms-2">{{ $schedule['cinema']['name'] }}</b>
-                        <br>
-                        <small class="ms-3">{{ $schedule['cinema']['location'] }}</small>
+                        <div class="d-flex justify-content-between">
+                            {{-- kanan --}}
+                            <div class="">
+                                <i class="fa-solid fa-building"></i><b class="ms-2">{{ $schedule['cinema']['name'] }}</b>
+                                <br>
+                                <small class="ms-3">{{ $schedule['cinema']['location'] }}</small>
+                            </div>
+
+                            {{-- kiri --}}
+                        <div class="">
+                            <b>Rp. {{ number_format($schedule['price'], 0, ',', '.') }}</b>
+                        </div>
+                        </div>
                         <div class="d-flex gap-3 ps-3 my-2">
                             @foreach ($schedule['hours'] as $hours)
                                 <div class="btn btn-outline -secondary">{{ $hours }}</div>

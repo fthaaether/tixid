@@ -4,8 +4,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
-use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\UserExport;
+
 class UserController extends Controller
 {
     /**
@@ -155,7 +154,7 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id)
+        public function edit($id)
     {
         //edit($id) => $id dari {$id} di route edit
         //Cinema::find() => mencari data di table cinemas berdasarkan id

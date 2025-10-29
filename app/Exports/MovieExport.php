@@ -39,8 +39,8 @@ class MovieExport implements FromCollection, WithHeadings, WithMapping
                 $movie->genre,
                 $movie->director,
                 $movie->age_rating . "+",
-                // poster berupa url, -> asset()
-                asset("storage") . "/" . $movie->poster,
+                    // poster berupa url, -> asset()
+                    asset("storage") . "/" . $movie->poster,
                 $movie->description,
                 //jika actived 1 muncul 'aktif', tidak muncul 'non-aktif'
                 $movie->actived == 1 ? 'Aktif' : 'Non-Aktif'

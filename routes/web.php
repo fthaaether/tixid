@@ -94,9 +94,7 @@ Route::prefix('/staff')->name('staff.')->group(function () {
         Route::get('/edit/{id}', [PromoController::class, 'edit'])->name('edit');
         Route::put('/update/{id}', [PromoController::class, 'update'])->name('update');
         Route::delete('/delete/{id}', [PromoController::class, 'destroy'])->name('delete');
-
         Route::get('/export', [PromoController::class, 'export'])->name('export');
-
         Route::get('trash', [PromoController::class, 'trash'])->name('trash');
         Route::patch('/restore/{id}', [PromoController::class, 'restore'])->name('restore');
         Route::delete('/delete-permanent/{id}', [PromoController::class, 'deletePermanent'])->name('delete_permanent');
