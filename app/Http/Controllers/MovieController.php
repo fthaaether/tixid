@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\MovieExport;
+use Yajra\DataTables\Facades\DataTables;
 
 class MovieController extends Controller
 {
@@ -21,6 +22,43 @@ class MovieController extends Controller
         $movies = Movie::all(); // all, tidak mengambil data dengan filter
         return view('admin.movie.index', compact('movies')); //movie nya gapake s karena nama foldermnya juga ga apake s
     }
+
+    public function datatables()
+    {
+        $movies = Movie::query();
+        return DataTables::of($movies)->addIndexColumn()->addColumn('poster_img', function ($movie) {
+            $url = asset('storage_img' . $movie->poster);
+            return '<img src="' . $url . '" width="70">';
+        })
+        ->addColumn('actived_badge', function($movie) {
+            if ($movie->actived) {
+                return '<span class="badge badge-success">Aktif</span>';
+            } else {
+                return '<span class="badge badge-danger">Non Aktif</span>';
+            }
+        })
+        ->addColumn('action', function ($movie) {
+            $btnDetail = '<button class="btn btn-secondary me-2" onclick="showModal(' . $movie . ')">Detail</button>';
+            $btnEdit = ' <a href="' . route('admin.movies.edit', $movie->id) . '" class="btn btn-primary me-2">Edit</a>';
+            $btnDelete = '<form action="' . route('admin.movies.delete', $movie->id) . '" method="POST">
+                        ' .@csrf_field() . method_field('DELETE') . '<button class="btn btn-danger">Hapus</button>
+                        </form>';
+                        $btnNonAktif = '';
+                        if($movie->actived) {
+                            $btnNonAktif = '<form action="' . route('admin.movies.nonaktif', $movie->id) . '" method="POST" class="me-2">
+                        ' .@csrf_field() . method_field('PATCH') . '<button class="btn btn-danger">Non-aktif</button>
+                        </form>';
+                        }
+                        return '<div class="d-flex justify-content-center align-items-center gap-2">'
+                        .$btnDetail . $btnEdit . $btnNonAktif . $btnDelete .
+                        '</div>';
+        })
+        ->rawColumns(['poster_img', 'actived_badge', 'action'])
+        ->make(true);
+    }
+
+        // public function datatables()
+
 
     public function home()
     {
