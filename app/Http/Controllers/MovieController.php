@@ -30,7 +30,7 @@ class MovieController extends Controller
         // addColumn -> menambahkan column yang bukan bagian dari field movies, biasana digunakan untuk
         // button field yang nilainya akan diolah/manipulasi
 
-        // addIndexColumn -> mengambil index dara, mulai dari 1
+        // addIndexColumn -> mengambil index data, mulai dari 1
         return DataTables::of($movies)->addIndexColumn()->addColumn('poster_img', function ($movie) {
             $url = asset('storage/' . $movie->poster);
             return '<img src="' . $url . '" width="70">';
@@ -52,7 +52,7 @@ class MovieController extends Controller
                         $btnAktif = '';
                         if($movie->actived) {
                             $btnNonAktif = '<form action="' . route('admin.movies.nonactive', $movie->id) . '" method="POST" class="me-2">
-                        ' .@csrf_field() . method_field('PATCH') . '<button class="btn btn-danger">Non-aktif</button>
+                        ' .@csrf_field() . method_field('PATCH') . '<button class="btn btn-warning">Non-aktif</button>
                         </form>';
                         } else {
                             $btnAktif = '<form action="' . route('admin.movies.active', $movie->id) . '" method="POST" class="me-2">

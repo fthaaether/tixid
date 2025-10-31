@@ -12,44 +12,54 @@
             <a href="{{ route('admin.users.create') }}" class="btn btn-success">Tambah Data</a>
         </div>
         <h5 class="mt-3">Data Bioskop</h5>
-        <table class="table table-bordered">
-            <tr>
+        <table class="table table-bordered" id="usersTable">
+            <thead>
+                <tr>
                 <th>#</th>
                 <th>Nama Petugas</th>
                 <th>Email</th>
                 <th>Role</th>
                 <th>Aksi</th>
-
             </tr>
-            {{-- $users : dari compact, karena pakai all jd array dimensi --}}
-            @foreach ($users as $index => $item)
-                <tr>
-                    {{-- $index dari 0, biar muncul dr 1 -> +1 --}}
-                    <th>{{  $index + 1 }}</th>
-                    {{-- name, location dari fillable model Cinema --}}
-                    <th>{{ $item['name'] }}</th>
-                    <th>{{ $item['email'] }}</th>
-                    <th>
-                        @if ($item['role'] == 'admin')
-                            <span class="alert alert-primary p-1 d-inline-block">admin</span>
-
-                        @elseif($item['role'] == 'staff')
-                            <span class="alert alert-success p-1 d-inline-block">staff</span>
-
-                        @endif
-                    </th>
-                    <th class="d-flex">
-                        {{-- ['id' => $item['id']] : mengirimkan $item['id'] ke route {id} --}}
-                        <a href="{{ route('admin.users.edit', ['id' => $item['id']])}}" class="btn btn-secondary me-2">Edit</a>
-
-                        <form action="{{ route('admin.users.delete', ['id' => $item['id']]) }}" method="post">
-                            @csrf
-                            @method('DELETE')
-                            <button class="btn btn-danger">Hapus</button>
-                        </form>
-                    </th>
-                </tr>
-            @endforeach
+            </thead>
         </table>
     </div>
 @endsection
+
+@push('script')
+    <script>
+        $(function () {
+            $('#usersTable').DataTable({
+                processing: true,
+                // data untuk datatable diproses secara serverside (controller)
+                serverSide: true,
+                // routing menuju fungsi yang memproses data untuk data table
+                ajax: "{{ route('admin.users.datatables') }}",
+                // iritan column (td), pastikan urutan sesuai th
+                // data : 'nama' -> naam diambil dari rawColumns jika addColu,ms, atau field dari model fillable
+                columns: [
+                    {
+                        data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'name', name: 'name', orderable: true,
+                        searchable: true
+                    },
+                    {
+                        data: 'email', name: 'email', orderable: true,
+                        searchable: true
+                    },
+                    {
+                        data: 'role', name: 'role', orderable: true,
+                        searchable: true
+                    },
+                    {
+                        data: 'action', name: 'action', orderable: false,
+                        searchable: false
+                    },
+                ]
+            });
+        });
+    </script>
+@endpush

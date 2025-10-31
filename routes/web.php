@@ -42,6 +42,11 @@ Route::middleware('isAdmin')->prefix('/admin')->name('admin.')->group(function (
         Route::get('trash', [CinemaController::class, 'trash'])->name('trash');
         Route::patch('/restore/{id}', [CinemaController::class, 'restore'])->name('restore');
         Route::delete('/delete-permanent/{id}', [CinemaController::class, 'deletePermanent'])->name('delete_permanent');
+
+        // datatables
+        Route::get('/datatables', [CinemaController::class, 'datatables'])->name('datatables');
+
+
     });
 
     //petugas
@@ -61,6 +66,9 @@ Route::middleware('isAdmin')->prefix('/admin')->name('admin.')->group(function (
         Route::get('trash', [UserController::class, 'trash'])->name('trash');
         Route::patch('/restore/{id}', [UserController::class, 'restore'])->name('restore');
         Route::delete('/delete-permanent/{id}', [UserController::class, 'deletePermanent'])->name('delete_permanent');
+
+        // datatables
+        Route::get('/datatables', [UserController::class, 'datatables'])->name('datatables');
     });
 
     //film
@@ -99,6 +107,9 @@ Route::prefix('/staff')->name('staff.')->group(function () {
         Route::get('trash', [PromoController::class, 'trash'])->name('trash');
         Route::patch('/restore/{id}', [PromoController::class, 'restore'])->name('restore');
         Route::delete('/delete-permanent/{id}', [PromoController::class, 'deletePermanent'])->name('delete_permanent');
+
+        // datatables
+        Route::get('/datatables', [UserController::class, 'datatables'])->name('datatables');
     });
 
     // Jadwal tayang

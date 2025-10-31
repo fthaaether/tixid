@@ -18,13 +18,16 @@
         </div>
         <h5 class="mb-3">Data Film</h5>
         <table class="table table-bordered" id="moviesTable">
-            <tr>
-                <th>#</th>
-                <th>Poster</th>
-                <th>Judul Film</th>
-                <th>Status Aktif</th>
-                <th>Aktif</th>
-            </tr>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Poster</th>
+                    <th>Judul Film</th>
+                    <th>Status Aktif</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+
         </table>
 
         <!-- Modal -->
@@ -130,16 +133,16 @@
             // membuat konten yg akan di tambahkan
             // backtip (diatas tab) : menulis strin glebih dari 1 baris
             let content = `
-                                                                            <img src="${image}" width="120" class="d-block mx-auto my-3">
-                                                                            <ul>
-                                                                                <li>Judul : ${item.title}</li>
-                                                                                <li>Durasi : ${item.duration}</li>
-                                                                                <li>Genre : ${item.genre}</li>
-                                                                                <li>Sutradara : ${item.director}</li>
-                                                                                <li>Usia Minimal : <span class="badge badge-danger">${item.age_rating}</span></li>
-                                                                                <li>Sinopsis : ${item.description}</li>
-                                                                            </ul>
-                                                                            `;
+                                                                                    <img src="${image}" width="120" class="d-block mx-auto my-3">
+                                                                                    <ul>
+                                                                                        <li>Judul : ${item.title}</li>
+                                                                                        <li>Durasi : ${item.duration}</li>
+                                                                                        <li>Genre : ${item.genre}</li>
+                                                                                        <li>Sutradara : ${item.director}</li>
+                                                                                        <li>Usia Minimal : <span class="badge badge-danger">${item.age_rating}</span></li>
+                                                                                        <li>Sinopsis : ${item.description}</li>
+                                                                                    </ul>
+                                                                                    `;
             // mengambil element html yg akan di simpan di konten di atas : document.querySelector()
             let modalDetailBody = document.querySelector("#modalDetailBody");
             // isi html di atas ke id="modalDetailBody"

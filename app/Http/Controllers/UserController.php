@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Yajra\DataTables\Facades\DataTables;
 
 class UserController extends Controller
 {
@@ -16,6 +17,24 @@ class UserController extends Controller
         $users = User::whereIn('role', ['admin', 'staff'])->get();
         //compact()
         return view('admin.user.index', compact('users'));
+    }
+
+    public function datatables()
+    {
+        $users = User::query();
+        return DataTables::of($users)
+        ->addIndexColumn()
+        ->addColumn('action', function ($user)  {
+            $btnEdit = ' <a href="' . route('admin.users.edit', $user->id) . '" class="btn btn-primary me-2">Edit</a>';
+            $btnDelete = '<form action="' . route('admin.users.delete', $user->id) . '" method="POST">
+            ' .@csrf_field() . method_field('DELETE') . '<button class="btn btn-danger">Hapus</button>
+                        </form>';
+                        return '<div class="d-flex justify-content-center align-items-center gap-2">'
+                        . $btnEdit . $btnDelete .
+                        '</div>';
+        })
+        ->rawColumns(['action'])
+        ->make(true);
     }
 
     /**
@@ -157,10 +176,10 @@ class UserController extends Controller
         public function edit($id)
     {
         //edit($id) => $id dari {$id} di route edit
-        //Cinema::find() => mencari data di table cinemas berdasarkan id
+        //Cinema::find() => mencari data di table users berdasarkan id
         $user = User::find($id);
         //dd() => cek data
-        // dd($cinema->toArray());
+        // dd($users->toArray());
         return view('admin.user.edit', compact('user'));
     }
 
