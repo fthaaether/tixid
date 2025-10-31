@@ -71,12 +71,14 @@ Route::middleware('isAdmin')->prefix('/admin')->name('admin.')->group(function (
         Route::get('/edit/{id}', [MovieController::class, 'edit'])->name('edit');
         Route::put('/update/{id}', [MovieController::class, 'update'])->name('update');
         Route::delete('/delete/{id}', [MovieController::class, 'destroy'])->name('delete');
-        Route::put('/nonactive/{id}', [MovieController::class, 'nonactive'])->name('nonactive');
+        Route::patch('/nonactive/{id}', [MovieController::class, 'nonactive'])->name('nonactive');
+        Route::patch('/active/{id}', [MovieController::class, 'active'])->name('active');
         Route::get('/export', [MovieController::class, 'export'])->name('export');
         Route::get('trash', [MovieController::class, 'trash'])->name('trash');
         Route::patch('/restore/{id}', [MovieController::class, 'restore'])->name('restore');
         Route::delete('/delete-permanent/{id}', [MovieController::class, 'deletePermanent'])->name('delete_permanent');
         Route::get('/datatables', [MovieController::class, 'datatables'])->name('datatables');
+
     });
 });
 

@@ -25,9 +25,14 @@ class MovieController extends Controller
 
     public function datatables()
     {
-        $movies = Movie::query();
+        $movies = Movie::query(); // eloquent model
+        // DataTable::of($movies) -> mengambil data dari query model movie, keseluruhan field
+        // addColumn -> menambahkan column yang bukan bagian dari field movies, biasana digunakan untuk
+        // button field yang nilainya akan diolah/manipulasi
+
+        // addIndexColumn -> mengambil index dara, mulai dari 1
         return DataTables::of($movies)->addIndexColumn()->addColumn('poster_img', function ($movie) {
-            $url = asset('storage_img' . $movie->poster);
+            $url = asset('storage/' . $movie->poster);
             return '<img src="' . $url . '" width="70">';
         })
         ->addColumn('actived_badge', function($movie) {
@@ -38,23 +43,29 @@ class MovieController extends Controller
             }
         })
         ->addColumn('action', function ($movie) {
-            $btnDetail = '<button class="btn btn-secondary me-2" onclick="showModal(' . $movie . ')">Detail</button>';
+            $btnDetail = '<button class="btn btn-secondary me-2" onclick=\'showModal(' . $movie . ')\'>Detail</button>';
             $btnEdit = ' <a href="' . route('admin.movies.edit', $movie->id) . '" class="btn btn-primary me-2">Edit</a>';
             $btnDelete = '<form action="' . route('admin.movies.delete', $movie->id) . '" method="POST">
                         ' .@csrf_field() . method_field('DELETE') . '<button class="btn btn-danger">Hapus</button>
                         </form>';
                         $btnNonAktif = '';
+                        $btnAktif = '';
                         if($movie->actived) {
-                            $btnNonAktif = '<form action="' . route('admin.movies.nonaktif', $movie->id) . '" method="POST" class="me-2">
+                            $btnNonAktif = '<form action="' . route('admin.movies.nonactive', $movie->id) . '" method="POST" class="me-2">
                         ' .@csrf_field() . method_field('PATCH') . '<button class="btn btn-danger">Non-aktif</button>
                         </form>';
+                        } else {
+                            $btnAktif = '<form action="' . route('admin.movies.active', $movie->id) . '" method="POST" class="me-2">
+                            ' .@csrf_field() . method_field('PATCH') . '<button class="btn btn-success">Aktifkan kembali</button>
+                            </form>';
                         }
                         return '<div class="d-flex justify-content-center align-items-center gap-2">'
-                        .$btnDetail . $btnEdit . $btnNonAktif . $btnDelete .
+                        .$btnDetail . $btnEdit . $btnNonAktif . $btnDelete . $btnAktif .
                         '</div>';
         })
         ->rawColumns(['poster_img', 'actived_badge', 'action'])
         ->make(true);
+        // rawColumns -> mendaftarkan column yang baru dibuat pada addColumn
     }
 
         // public function datatables()
@@ -309,6 +320,18 @@ class MovieController extends Controller
     {
         $movie = Movie::findOrFail($id);
         $nonActiveData = $movie->update(['actived' => 0]);
+
+        if ($nonActiveData) {
+            return redirect()->back()->with('success', 'Film berhasil di non-aktifkan');
+        } else {
+            return redirect()->back()->with('error', 'Gagal! silahkan coba lagi.');
+        }
+    }
+
+    public function active($id)
+    {
+        $movie = Movie::findOrFail($id);
+        $nonActiveData = $movie->update(['actived' => 1]);
 
         if ($nonActiveData) {
             return redirect()->back()->with('success', 'Film berhasil di non-aktifkan');
