@@ -25,8 +25,8 @@ class CinemaController extends Controller
     public function datatables()
     {
         $cinemas = Cinema::query();
-        return DataTables::of($cinemas)
-        ->addIndexColumn()
+        return DataTables::of($cinemas) // untuk mengambi data fillable
+        ->addIndexColumn() // untuk data angka di table
         ->addColumn('action', function ($cinema)  {
             $btnEdit = ' <a href="' . route('admin.cinemas.edit', $cinema->id) . '" class="btn btn-primary me-2">Edit</a>';
             $btnDelete = '<form action="' . route('admin.cinemas.delete', $cinema->id) . '" method="POST">
@@ -36,8 +36,8 @@ class CinemaController extends Controller
                         . $btnEdit . $btnDelete .
                         '</div>';
         })
-        ->rawColumns(['action'])
-        ->make(true);
+        ->rawColumns(['action']) // mendaftarkan column yang baru dibuat pada addColumn()
+        ->make(true); // mengubah query jadi JSON agar bisa terbaca js nya
     }
 
     /**

@@ -21,9 +21,13 @@ class UserController extends Controller
 
     public function datatables()
     {
-        $users = User::query();
+        $users = User::query(); // eloquent model
+        // DataTable::of($users) -> mengambil data dari query model user, keseluruhan field
         return DataTables::of($users)
+        // addIndexColumn -> mengambil index data, mulai dari 1
         ->addIndexColumn()
+        // addColumn -> menambahkan column yang bukan bagian dari field, biasanya digunakan untuk
+        // button field yang nilainya akan diolah/manipulasi
         ->addColumn('action', function ($user)  {
             $btnEdit = ' <a href="' . route('admin.users.edit', $user->id) . '" class="btn btn-primary me-2">Edit</a>';
             $btnDelete = '<form action="' . route('admin.users.delete', $user->id) . '" method="POST">
@@ -238,7 +242,7 @@ class UserController extends Controller
         // ekstensi antara xlsx/csv
         $fileName = "data-user.xlsx";
         // prosese download
-        return Excel::download(new UserExport,$fileName);
+        return Excel::download(new UserExport, $fileName);
     }
 
     public function trash()

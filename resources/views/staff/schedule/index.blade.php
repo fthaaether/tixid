@@ -15,41 +15,18 @@
                 {{ Session::get('success') }}
             </div>
         @endif
-        <table class="table table-bordered">
-            <tr>
-                <th>#</th>
-                <th>Nama Bioskop</th>
-                <th>Judul Film</th>
-                <th>Harga</th>
-                <th>Jadwal Tayangan</th>
-                <th>Aksi</th>
-            </tr>
-            @foreach ($schedules as $key => $schedule)
+        <table class="table table-bordered" id="schedulesTable">
+            <thead>
                 <tr>
-                    <td>{{ $key + 1 }}</td>
-                    {{-- memunculkan detail relasi : $item['namarelasi']['data'] --}}
-                    <td>{{ $schedule['cinema']['name'] }}</td>
-                    <td>{{ $schedule['movie']['title'] }}</td>
-                    <td>Rp. {{ number_format($schedule['price'], 0, ',', '.') }}</td>
-                    {{-- karena hours, array munculkan dengan loop --}}
-                    <td>
-                        <ul>
-                            @foreach ($schedule['hours'] as $hours)
-                                <li>{{ $hours }}</li>
-                            @endforeach
-                        </ul>
-                    </td>
-                    <td class="d-flex">
-                        <a href="{{ route('staff.schedules.edit', $schedule->id) }}" class="btn btn-primary">Edit</a>
-                        <form action="{{ route('staff.schedules.delete', $schedule->id) }}" method="POST">
-                            @csrf
-                            @method('DELETE')
-                            <button class="btn btn-danger ms-2">Hapus</button>
-                        </form>
-
-                    </td>
+                    <th>#</th>
+                    <th>Nama Bioskop</th>
+                    <th>Judul Film</th>
+                    <th>Harga</th>
+                    <th>Jadwal Tayangan</th>
+                    <th>Aksi</th>
                 </tr>
-            @endforeach
+            </thead>
+
         </table>
 
         {{-- modal --}}
@@ -109,9 +86,9 @@
                             <div class="mb-3">
                                 <label for="hours" class="form-label">Jam Tayang :</label>
                                 <input type="time" name="hours[]" id="hours" class="form-control
-                                        @if ($errors->has('hours.*'))
-                                            is-invalid
-                                        @endif">
+                                                @if ($errors->has('hours.*'))
+                                                    is-invalid
+                                                @endif">
                                 {{-- sediakan tempat untuk penambahan input baru dari JS, gunakan id untuk pemanggilan JS
                                 --}}
                                 <div id="aditionalInput"></div>
@@ -153,4 +130,46 @@
         </script>
 
     @endif
+@endpush
+
+@push('script')
+    <script>
+        $(function () {
+            $('#schedulesTable').DataTable({
+                processing: true,
+                // data untuk datatable diproses secara serverside (controller)
+                serverSide: true,
+                // routing menuju fungsi yang memproses data untuk data table
+                ajax: "{{ route('staff.schedules.datatables') }}",
+                // iritan column (td), pastikan urutan sesuai th
+                // data : 'nama' -> naam diambil dari rawColumns jika addColu,ms, atau field dari model fillable
+                columns: [
+                    {
+                        data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'cinema_lam', name: 'cinema_lam', orderable: true,
+                        searchable: true
+                    },
+                    {
+                        data: 'movie_title', name: 'movie_title', orderable: true,
+                        searchable: true
+                    },
+                    {
+                        data: 'price', name: 'price', orderable: true,
+                        searchable: true
+                    },
+                    {
+                        data: 'hours', name: 'hours', orderable: true,
+                        searchable: true
+                    },
+                    {
+                        data: 'action', name: 'action', orderable: false,
+                        searchable: false
+                    },
+                ]
+            });
+        });
+    </script>
 @endpush

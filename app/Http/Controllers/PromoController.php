@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Exports\PromoExport;
 use Maatwebsite\Excel\Facades\Excel;
+use Yajra\DataTables\Facades\DataTables;
 
 
 class PromoController extends Controller
@@ -120,4 +121,23 @@ class PromoController extends Controller
         $promo->forceDelete();
         return redirect()->back()->with('success', 'Berhasil menghapus seutuhnya!');
     }
+
+        public function datatables()
+    {
+        $promos = Promo::query();
+        return DataTables::of($promos)
+        ->addIndexColumn()
+        ->addColumn('action', function ($promo)  {
+            $btnEdit = ' <a href="' . route('staff.promos.edit', $promo->id) . '" class="btn btn-primary me-2">Edit</a>';
+            $btnDelete = '<form action="' . route('staff.promos.delete',    $promo->id) . '" method="POST">
+            ' .@csrf_field() . method_field('DELETE') . '<button class="btn btn-danger">Hapus</button>
+                        </form>';
+                        return '<div class="d-flex justify-content-center align-items-center gap-2">'
+                        . $btnEdit . $btnDelete .
+                        '</div>';
+        })
+        ->rawColumns(['action'])
+        ->make(true);
+    }
 }
+

@@ -109,7 +109,7 @@ Route::prefix('/staff')->name('staff.')->group(function () {
         Route::delete('/delete-permanent/{id}', [PromoController::class, 'deletePermanent'])->name('delete_permanent');
 
         // datatables
-        Route::get('/datatables', [UserController::class, 'datatables'])->name('datatables');
+        Route::get('/datatables', [PromoController::class, 'datatables'])->name('datatables');
     });
 
     // Jadwal tayang
@@ -124,6 +124,9 @@ Route::prefix('/staff')->name('staff.')->group(function () {
         Route::delete('/delete-permanent/{id}', [ScheduleController::class, 'deletePermanent'])->name('delete_permanent');
 
         Route::get('/export', [ScheduleController::class, 'export'])->name('export');
+
+        // datatables
+        Route::get('/datatables', [ScheduleController::class, 'datatables'])->name('datatables');
     });
 });
 

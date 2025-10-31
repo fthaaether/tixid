@@ -33,13 +33,13 @@
     <script>
         $(function () {
             $('#cinemasTable').DataTable({
-                processing: true,
+                processing: true, // loading
                 // data untuk datatable diproses secara serverside (controller)
                 serverSide: true,
                 // routing menuju fungsi yang memproses data untuk data table
                 ajax: "{{ route('admin.cinemas.datatables') }}",
-                // iritan column (td), pastikan urutan sesuai th
-                // data : 'nama' -> naam diambil dari rawColumns jika addColu,ms, atau field dari model fillable
+                // urutan column (td), pastikan urutan sesuai th
+                // data : 'nama' -> nama diambil dari rawColumns jika addColumns, atau field dari model fillable
                 columns: [
                     {
                         data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false,
@@ -47,14 +47,14 @@
                     },
                     {
                         data: 'name', name: 'name', orderable: true,
-                        searchable: true
+                        searchable:     true
                     },
                     {
                         data: 'location', name: 'location', orderable: true,
                         searchable: true
                     },
                     {
-                        data: 'action', name: 'action', orderable: false,
+                        data: 'action', name: 'action', orderable: false    ,
                         searchable: false
                     },
                 ]

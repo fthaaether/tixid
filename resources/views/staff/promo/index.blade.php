@@ -12,39 +12,51 @@
             <a href="{{ route('staff.promos.create') }}" class="btn btn-success">Tambah Data</a>
         </div>
         <h5 class="mt-3">Data Promo</h5>
-        <table class="table table-bordered ">
+        <table class="table table-bordered" id="promosTable">
             {{-- jika ingin seperti sebelumnya hapus class di tr nya --}}
+            <thead>
             <tr class="text-center">
                 <th>No</th>
                 <th>Kode Promo</th>
                 <th>Total Potongan</th>
                 <th>Aksi</th>
             </tr>
-            @foreach ($promos as $index => $item)
-                <tr>
-                    <th class="text-center">{{ $index + 1 }}</th>
-                    <th>{{ $item['promo_code'] }}</th>
-                    <th>
-                        @if ($item['type'] == 'percent')
-                            {{ $item['discount'] }}%
-                        @else
-                            Rp {{ number_format($item['discount'], 0, ',', '.') }}
-                        @endif
-                    </th>
-                    {{-- tipe dan jumlah potongan disatukan pake if kayaknya --}}
-                    {{-- jika ingin tombol seperti yang awal, hapus justify-content-center di classnya dan class di tombol edit
-                    --}}
-                    <th class="d-flex">
-                        {{-- ['id' => $item['id']] : mengirim $item['id'] ke route {id} --}}
-                        <a href="{{ route('staff.promos.edit', ['id' => $item['id']]) }}" class="btn btn-primary mx-2">Edit</a>
-                        <form action="{{route('staff.promos.delete', ['id' => $item['id']])}}" method="POST">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger">Hapus</button>
-                        </form>
-                    </th>
-                </tr>
-            @endforeach
+            </thead>
         </table>
     </div>
 @endsection
+
+@push('script')
+    <script>
+        $(function () {
+            $('#promosTable').DataTable({
+                processing: true,
+                // data untuk datatable diproses secara serverside (controller)
+                serverSide: true,
+                // routing menuju fungsi yang memproses data untuk data table
+                ajax: "{{ route('staff.promos.datatables') }}",
+                // iritan column (td), pastikan urutan sesuai th
+                // data : 'nama' -> naam diambil dari rawColumns jika addColu,ms, atau field dari model fillable
+                columns: [
+                    {
+                        data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'promo_code', name: 'promo_code', orderable: true,
+                        searchable: true
+                    },
+                    {
+                        data: 'discount', name: 'discount', orderable: true,
+                        searchable: true
+                    },
+                    {
+                        data: 'action', name: 'action', orderable: false,
+                        searchable: false
+                    },
+                ]
+            });
+        });
+    </script>
+@endpush
+

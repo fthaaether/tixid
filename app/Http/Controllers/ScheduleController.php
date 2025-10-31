@@ -8,6 +8,7 @@ use App\Models\Schedule;
 use Illuminate\Http\Request;
 use App\Exports\ScheduleExport;
 use Maatwebsite\Excel\Facades\Excel;
+use Yajra\DataTables\Facades\DataTables;
 class ScheduleController extends Controller
 {
     /**
@@ -104,8 +105,8 @@ class ScheduleController extends Controller
      */
     public function edit(Schedule $schedule, $id)
     {
-            $schedule = Schedule::where('id', $id)->with(['cinema', 'movie'])->first();
-            return view('staff.schedule.edit', compact('schedule'));
+        $schedule = Schedule::where('id', $id)->with(['cinema', 'movie'])->first();
+        return view('staff.schedule.edit', compact('schedule'));
     }
 
     /**
@@ -128,10 +129,9 @@ class ScheduleController extends Controller
             'hours' => $request->hours,
         ]);
 
-        if($updateData) {
+        if ($updateData) {
             return redirect()->route('staff.schedules.index')->with('success', 'Berhasil mengubah data!');
-        }
-        else {
+        } else {
             return redirect()->back()->with('error', 'Gagal! silahkan coba lagi');
         }
     }
@@ -173,7 +173,46 @@ class ScheduleController extends Controller
         // ekstensi antara xlsx/csv
         $fileName = "data-schedule.xlsx";
         // prosese download
-        return Excel::download(new ScheduleExport,$fileName);
+        return Excel::download(new ScheduleExport, $fileName);
+    }
+
+    public function datatables()
+    {
+
+        $schedules = Schedule::query()->with(['cinema', 'movie'])->get();
+        return DataTables::of($schedules)
+            ->addIndexColumn()
+            ->addColumn('cinema_lam', function ($schedule) {
+                return $schedule->cinema->name;
+            })
+            ->addColumn('movie_title', function ($schedule) {
+                return $schedule->movie->title;
+            })
+            ->addColumn('price', function ($schedule) {
+                return 'Rp.' . number_format($schedule->price, 0, ',', '.');
+            })
+            ->addColumn('hours', function ($schedule) {
+                if (is_array($schedule->hours)) {
+                    $list = '<ul>';
+                    foreach ($schedule->hours as $hours) {
+                        $list .= '<li>' . $hours . '</li>';
+
+                    }
+                    $list .= '</ul>';
+                    return $list;
+                }
+            })
+            ->addColumn('action', function ($schedule) {
+                $btnEdit = ' <a href="' . route('staff.schedules.edit', $schedule->id) . '" class="btn btn-primary me-2">Edit</a>';
+                $btnDelete = '<form action="' . route('staff.schedules.delete', $schedule->id) . '" method="POST">
+            ' . @csrf_field() . method_field('DELETE') . '<button class="btn btn-danger">Hapus</button>
+                        </form>';
+                return '<div class="d-flex justify-content-center align-items-center gap-2">'
+                    . $btnEdit . $btnDelete .
+                    '</div>';
+            })
+            ->rawColumns(['cinema_lam', 'movie_title', 'price', 'hours', 'action'])
+            ->make(true);
     }
 }
 
