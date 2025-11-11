@@ -25,7 +25,7 @@ class MovieController extends Controller
 
     public function datatables()
     {
-        $movies = Movie::query(); // eloquent model
+        $movies = Movie::query(); // eloquent modelan
         // DataTable::of($movies) -> mengambil data dari query model movie, keseluruhan field
         // addColumn -> menambahkan column yang bukan bagian dari field movies, biasana digunakan untuk
         // button field yang nilainya akan diolah/manipulasi

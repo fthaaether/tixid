@@ -86,7 +86,6 @@ Route::middleware('isAdmin')->prefix('/admin')->name('admin.')->group(function (
         Route::patch('/restore/{id}', [MovieController::class, 'restore'])->name('restore');
         Route::delete('/delete-permanent/{id}', [MovieController::class, 'deletePermanent'])->name('delete_permanent');
         Route::get('/datatables', [MovieController::class, 'datatables'])->name('datatables');
-
     });
 });
 
@@ -94,7 +93,6 @@ Route::prefix('/staff')->name('staff.')->group(function () {
     Route::get('/dashboard', function () {
         return view('staff.dashboard');
     })->name('dashboard');
-
     // Promo
     Route::prefix('/promos')->name('promos.')->group(function (): void {
         Route::get('/index', [PromoController::class, 'index'])->name('index');
@@ -107,7 +105,6 @@ Route::prefix('/staff')->name('staff.')->group(function () {
         Route::get('trash', [PromoController::class, 'trash'])->name('trash');
         Route::patch('/restore/{id}', [PromoController::class, 'restore'])->name('restore');
         Route::delete('/delete-permanent/{id}', [PromoController::class, 'deletePermanent'])->name('delete_permanent');
-
         // datatables
         Route::get('/datatables', [PromoController::class, 'datatables'])->name('datatables');
     });
@@ -149,3 +146,7 @@ Route::middleware('isGuest')->group(function () {
     Route::post('/auth', [UserController::class, 'authentication'])->name('auth'); //mau mengirim data makanya menggunakan post
 });
 
+// menu "bioskop" pada navbar user
+Route::get('/cinemas/list', [CinemaController::class, 'cinemaList'])->name('cinemas.list');
+Route::get('/cinemas/{cinema_id}/schedules',
+[CinemaController::class, 'cinemaSchedules'])->name('cinema.schedules');

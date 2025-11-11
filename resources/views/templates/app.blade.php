@@ -77,7 +77,7 @@
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Bioskop</a>
+                            <a class="nav-link" href="{{ route('cinemas.list') }}">Bioskop</a> 
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#">Tiket</a>

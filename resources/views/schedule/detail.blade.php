@@ -1,7 +1,6 @@
 @extends('templates.app')
 
 @section('content')
-
     <div class="container pt-5">
         <div class="w-75 d-block m-auto">
             <div class="d-flex">
@@ -113,7 +112,6 @@
                                 <br>
                                 <small class="ms-3">{{ $schedule['cinema']['location'] }}</small>
                             </div>
-
                             {{-- kiri --}}
                             <div class="">
                                 <b>Rp. {{ number_format($schedule['price'], 0, ',', '.') }}</b>
@@ -121,8 +119,15 @@
                         </div>
 
                         <div class="d-flex gap-3 ps-3 my-2">
-                            @foreach ($schedule['hours'] as $hours)
-                                <div class="btn btn-outline-secondary">{{ $hours }}</div>
+                            {{-- hours berbentuk array, sehingga gunakan loop untuk akses itemnya --}}
+                            @foreach ($schedule['hours'] as $index =>
+                            $hours)
+                            {{-- argumen pada fungsi selectedHour
+                            1. $schedule->id : mengambil detail schedule yaang akan dibeli
+                            2. $index : mengambil index dari array hours untuk mengetahui jam berapa tiker akan dipesan
+                            3. this : mengambil elemen html yang diklik secara penuh untuk diakses javaScript --}}
+                                <div class="btn btn-outline-secondary" style="cursor: pointer" onclick="selectedHour
+                                ('{{ $schedule->id }}', '{{ $index }}', this)">{{ $hours }}</div>
                             @endforeach
                         </div>
                     </div>
@@ -135,3 +140,27 @@
         </div>
     </div>
 @endsection
+@push('script')
+<script>
+    let selectedScheduleId = null;
+    let selectedHourIndex = null;
+    let lastCliked = null;
+
+    function selectedHour(scheduleId, HourIndex, el){
+        selectedScheduleId = scheduleId;
+        selectedHourIndex = HourIndex;
+
+        if(lastCliked) {
+            lastCliked.style.backgroundColor = "";
+            lastCliked.style.color = "";
+            lastCliked.style.borderColor = "";
+        }
+
+        el.style.backgroundColor = "#112646";
+        el.style.color = "white";
+        el.style.borderColor = "#112646";
+
+        lastCliked = el;
+    }
+</script>
+@endpush
