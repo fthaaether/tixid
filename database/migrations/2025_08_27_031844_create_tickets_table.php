@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->foreignId('schedule_id')->constrained('schedules');
             $table->foreignId('promo_id')->nullable()->constrained('promos');  // nullable() : memperbolehkan data tidak diisi
             $table->string('rows_of_seats');
+            
             $table->integer('quantity');
             $table->integer('total_price');
             $table->date('date');

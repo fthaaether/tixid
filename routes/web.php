@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CinemaController;
 use App\Http\Controllers\MovieController;
+use App\Http\Controllers\TicketController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PromoController;
@@ -150,3 +151,12 @@ Route::middleware('isGuest')->group(function () {
 Route::get('/cinemas/list', [CinemaController::class, 'cinemaList'])->name('cinemas.list');
 Route::get('/cinemas/{cinema_id}/schedules',
 [CinemaController::class, 'cinemaSchedules'])->name('cinema.schedules');
+
+Route::middleware('isUser')->group(function() {
+    Route::get('/schedules/{scheduleId}/hours/{hourId}', [ScheduleController::class, 'showSeats'])->name('schedules.show-seats');
+
+    Route::prefix('/tickets')->name('tickets.')->group(function(){
+        Route::post('/', [TicketController::class, 'store'])->name('store');
+    });
+});
+

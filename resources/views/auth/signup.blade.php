@@ -17,13 +17,19 @@
 
 <body>
 
-    <form class="w-50 d-block mx-auto my-5">
+    <form class="w-50 d-block mx-auto my-5" method="post" action="{{ route('signup.send_data') }}">
         @if (Session::get('failed'))
             <div class="alert alert-danger my-3">
                 {{ Session::get('failed') }}
             </div>
             @endif
         @csrf
+        @if ($errors->any())
+
+        @foreach ($errors->all() as $item)
+{{ $item }}
+        @endforeach
+        @endif
         {{-- digunakan untuk generate token yang diperlukan server --}}
         {{-- @csrf sebagai identifier token dari frontend ke backend --}}
 

@@ -1,96 +1,106 @@
 @extends('templates.app')
 
 @section('content')
-    <div class="container my-5 card">
-        <div class="card-body">
-            <i class="fa-solid fa-location-dot me-3"></i>{{ $schedules[0]['cinema']['location'] }}
-            <hr>
-            @foreach ($schedules as $schedule)
+
+<div class="container my-5 card">
+    <div class="card-body">
+        <i class="fa-solid fa-location-dot me-3"></i>{{$schedules[0]['cinema']['location']}}
+        <hr>
+        @foreach ($schedules as $schedule)
             <div class="my-2">
                 <div class="d-flex">
-                    <div style="width: 150px; height: 200px;">
-                        <img src="{{ asset('storage/' . $schedule['movie']['poster']) }}" alt="Poster Superman"
-                            class="w-100 rounded">
+                    <div style="width: 150px; height: 200px">
+                        <img src="{{ asset('storage/' . $schedule['movie']['poster'])}}" alt="" class="w-100">
                     </div>
                     <div class="ms-5 mt-4">
-                        <h5 class="fw-bold">{{ $schedule['movie']['title'] }}</h5>
-                        <table class="table table-borderless">
+                        <h5>{{ $schedule['movie']['title'] }}</h5>
+                        <table>
                             <tr>
                                 <td><b class="text-secondary">Genre</b></td>
-                                <td class="px-3">:</td>
-                                <td>{{ $schedule['movie']['genre'] }}</td>
+                                <td class="px-3"></td>
+                                <td>{{ $schedule['movie']['genre']}}</td>
                             </tr>
                             <tr>
                                 <td><b class="text-secondary">Durasi</b></td>
-                                <td class="px-3">:</td>
-                                <td>{{ $schedule['movie']['duration'] }}</td>
+                                <td class="px-3"></td>
+                                <td>{{ $schedule['movie']['duration']}}</td>
                             </tr>
                             <tr>
                                 <td><b class="text-secondary">Sutradara</b></td>
-                                <td class="px-3">:</td>
-                                <td>{{ $schedule['movie']['director'] }}</td>
+                                <td class="px-3"></td>
+                                <td>{{ $schedule['movie']['director']}}</td>
                             </tr>
                             <tr>
-                                <td><b class="text-secondary">Rating usia</b></td>
-                                <td class="px-3">:</td>
-                                <td><span class="badge bg-danger">{{ $schedule['movie']['age_rating'] }}</span></td>
+                                <td><b class="text-secondary">Rating Usia</b></td>
+                                <td class="px-3"></td>
+                                <td><span class="badge badge-danger">{{ $schedule['movie']['age_rating']}}+</span></td>
                             </tr>
                         </table>
                     </div>
                 </div>
                 <div class="w-100 my-3">
                     <div class="d-flex justify-content-end">
-                        <div class="">
-                            <b>Rp. {{ number_format($schedule['price'], 0, ',', '.') }}</b>
+                        <div>
+                            <b>Rp. {{number_format($schedule['price'], 0, ',', '.')}}</b>
                         </div>
                     </div>
-                    <div class="d-flex gap-3 ps-3 my-2 flex-wrap">
-                        @foreach ($schedule['hours'] as $hours)
-                            <div class="btn btn-outline-secondary">{{ $hours }}</div>
+                    <div class="d-flex gap-3 ps-3 my-2">
+                        {{-- hours berbentuk array, sehingga gunakan loop untuk akses itemnya --}}
+                        @foreach ($schedule['hours'] as $index => $hours)
+                        {{-- argumen pada fungsi setectedHour
+                        1. $schedule->id : mengambil detail schedule yang akan dibeli
+                        2. $index : mengambil index dari array hours untuk mengetahui jam berapa tiket akan dipesan
+                        3. this : mengambil elemen html yang diclik secara penuh untuk diakses JS --}}
+                            <div class="btn btn-outline-secondary" style="cursor: pointer" onclick="selectedHour('{{ $schedule->id }}', '{{ $index }}', this)">{{ $hours }}</div>
                         @endforeach
                     </div>
                 </div>
             </div>
             <hr>
-            @endforeach
+        @endforeach
+    </div>
+</div>
+<div class="w-100 p-2 bg-light text-center fixed-bottom" id="wrapBtn">
+    {{-- javascript:void(0) : ninaktifkan href --}}
+    <a href="javascript:void(0)" id="btnOrder"><i class="fa-solid fa-ticket"></i> BELI TIKET</a>
+</div>
+@endsection
 
-            {{-- <div class="mb-5 mt-4">
-                <div class="mb-5">
-                    @foreach ($movie['schedules'] as $schedule)
-                    @endforeach
-
-                </div> --}}
-
-                <div class="w-100 p-2 bg-light text-center fixed-bottom">
-
-                    <a href="#"><i class="pa-solid fa-tiket"></i>BELI TIKET</a>
-
-                </div>
-
-            </div>
-        </div>
-    @endsection
 @push('script')
+
 <script>
     let selectedScheduleId = null;
     let selectedHourIndex = null;
-    let lastCliked = null;
+    let lastClicked = null;
 
-    function selectedHour(scheduleId, HourIndex, el){
+    function selectedHour(scheduleId, hourIndex, el) {
         selectedScheduleId = scheduleId;
-        selectedHourIndex = HourIndex;
+        selectedHourIndex = hourIndex;
 
-        if(lastCliked) {
-            lastCliked.style.backgroundColor = "";
-            lastCliked.style.color = "";
-            lastCliked.style.borderColor = "";
+        //ubah kotak yang di klik
+        //el diambil dari parameter  fungsi dengan nilai argumen this di html nya
+        if(lastClicked) {
+            lastClicked.style.backgroundColor = "";
+            lastClicked.style.color = "";
+            lastClicked.style.borderColor = "";
         }
 
         el.style.backgroundColor = "#112646";
         el.style.color = "white";
         el.style.borderColor = "#112646";
 
-        lastCliked = el;
+        lastClicked = el;
+
+        let wrapBtn = document.querySelector("#wrapBtn");
+        // hapus class (classList.remove)
+        wrapBtn.classList.remove("bg-light");
+        wrapBtn.style.backgroundColor = '#112646';
+        // memanggil route web.php di JS
+        // .replace() mengganti/mengisi path dinamis {scheduleId} di web.php
+        let url = "{{ route('schedules.show-seats', ['scheduleId' => ':scheduleId', 'hourId' => ':hourId']) }}".replace(':scheduleId', scheduleId).replace(':hourId', hourIndex);
+        let btnOrder = document.querySelector("#btnOrder");
+        btnOrder.href = url;
+        btnOrder.style.color = 'white';
     }
 </script>
 @endpush

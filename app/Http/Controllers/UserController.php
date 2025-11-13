@@ -49,7 +49,7 @@ class UserController extends Controller
         $request->validate([
             'first_name' => 'required|min:3',
             'last_name' => 'required|min:3',
-            'email' => 'required|email:dns',
+            'email' => 'required',
             'password' => 'required|min:8',
         ], [
             'first_name.required' => 'First name wajib di isi',
@@ -67,7 +67,6 @@ class UserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => 'user'
-
         ]);
 
         if ($createData) {

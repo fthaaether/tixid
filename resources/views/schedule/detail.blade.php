@@ -134,33 +134,48 @@
                     <hr>
                 @endforeach
             </div>
-            <div class="w-100 p-2 bg-light text-center fixed-bottom">
-                <a href=""><i class="fa-solid fa-ticket"></i>Beli Tiket</a>
-            </div>
+<div class="w-100 p-2 bg-light text-center fixed-bottom" id="wrapBtn">
+    {{-- javascript:void(0) : ninaktifkan href --}}
+    <a href="javascript:void(0)" id="btnOrder"><i class="fa-solid fa-ticket"></i> BELI TIKET</a>
+</div>
         </div>
     </div>
 @endsection
 @push('script')
+
 <script>
     let selectedScheduleId = null;
     let selectedHourIndex = null;
-    let lastCliked = null;
+    let lastClicked = null;
 
-    function selectedHour(scheduleId, HourIndex, el){
+    function selectedHour(scheduleId, hourIndex, el) {
         selectedScheduleId = scheduleId;
-        selectedHourIndex = HourIndex;
+        selectedHourIndex = hourIndex;
 
-        if(lastCliked) {
-            lastCliked.style.backgroundColor = "";
-            lastCliked.style.color = "";
-            lastCliked.style.borderColor = "";
+        //ubah kotak yang di klik
+        //el diambil dari parameter  fungsi dengan nilai argumen this di html nya
+        if(lastClicked) {
+            lastClicked.style.backgroundColor = "";
+            lastClicked.style.color = "";
+            lastClicked.style.borderColor = "";
         }
 
         el.style.backgroundColor = "#112646";
         el.style.color = "white";
         el.style.borderColor = "#112646";
 
-        lastCliked = el;
+        lastClicked = el;
+
+        let wrapBtn = document.querySelector("#wrapBtn");
+        // hapus class (classList.remove)
+        wrapBtn.classList.remove("bg-light");
+        wrapBtn.style.backgroundColor = '#112646';
+        // memanggil route web.php di JS
+        // .replace() mengganti/mengisi path dinamis {scheduleId} di web.php
+        let url = "{{ route('schedules.show-seats', ['scheduleId' => ':scheduleId', 'hourId' => ':hourId']) }}".replace(':scheduleId', scheduleId).replace(':hourId', hourIndex);
+        let btnOrder = document.querySelector("#btnOrder");
+        btnOrder.href = url;
+        btnOrder.style.color = 'white';
     }
 </script>
 @endpush

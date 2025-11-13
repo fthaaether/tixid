@@ -214,5 +214,12 @@ class ScheduleController extends Controller
             ->rawColumns(['cinema_lam', 'movie_title', 'price', 'hours', 'action'])
             ->make(true);
     }
+
+    public function showSeats($scheduleId, $hourId)
+    {
+        $schedule = Schedule::where('id', $scheduleId)->with('cinema')->first();
+        $hour = $schedule['hours'][$hourId];
+        return view('schedule.show-seats', compact('schedule', 'hour'));
+    }
 }
 
