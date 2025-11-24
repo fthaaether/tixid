@@ -10,7 +10,7 @@ class Ticket extends Model
     use SoftDeletes;
 
     protected $fillable = ['user_id', 'schedule_id', 'promo_id',
-    'rows_of_sets', 'quantity', 'total_price', 'date', 'actived', 'hour', 'tax'];
+    'rows_of_seats', 'quantity', 'total_price', 'date', 'actived', 'hour', 'tax'];
 
     protected function casts(): array {
         return[

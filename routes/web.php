@@ -13,7 +13,7 @@ Route::get('/', [MovieController::class, 'home'])->name('home');
 Route::get('/movies/active', [MovieController::class, 'homeMovies'])->name('home.movies.all');
 
 Route::get('/schedules/detail/{movie_id}', [MovieController::class, 'movieSchedule'])
-->name('schedules.detail');
+    ->name('schedules.detail');
 
 Route::get('/logout', [UserController::class, 'logout'])->name('logout');
 
@@ -114,7 +114,7 @@ Route::prefix('/staff')->name('staff.')->group(function () {
     Route::prefix('/schedules')->name('schedules.')->group(function () {
         Route::get('/', [ScheduleController::class, 'index'])->name('index');
         Route::post('/store', [ScheduleController::class, 'store'])->name('store');
-        Route::get('/edit/{id}',[ScheduleController::class, 'edit'])->name('edit');
+        Route::get('/edit/{id}', [ScheduleController::class, 'edit'])->name('edit');
         Route::patch('/update/{id}', [ScheduleController::class, 'update'])->name('update');
         Route::delete('/delete/{id}', [ScheduleController::class, 'destroy'])->name('delete');
         Route::get('trash', [ScheduleController::class, 'trash'])->name('trash');
@@ -149,14 +149,23 @@ Route::middleware('isGuest')->group(function () {
 
 // menu "bioskop" pada navbar user
 Route::get('/cinemas/list', [CinemaController::class, 'cinemaList'])->name('cinemas.list');
-Route::get('/cinemas/{cinema_id}/schedules',
-[CinemaController::class, 'cinemaSchedules'])->name('cinema.schedules');
+Route::get(
+    '/cinemas/{cinema_id}/schedules',
+    [CinemaController::class, 'cinemaSchedules']
+)->name('cinema.schedules');
 
-Route::middleware('isUser')->group(function() {
-    Route::get('/schedules/{scheduleId}/hours/{hourId}', [ScheduleController::class, 'showSeats'])->name('schedules.show-seats');
+Route::middleware('isUser')->group(function () {
+    Route::get('/schedules/{scheduleId}/hours/{hourId}', [ScheduleController::class, 'showSeats'])->name('schedules.show_seats');
 
-    Route::prefix('/tickets')->name('tickets.')->group(function(){
+    Route::prefix('/tickets')->name('tickets.')->group(function () {
+        Route::get('/', [TicketController::class, 'index'])->name('index');
+        
         Route::post('/', [TicketController::class, 'store'])->name('store');
+        Route::get('/{ticketUd}/order', [TicketController::class, 'orderPage'])->name('order');
+        Route::post('/qrcode', [TicketController::class, 'createQrcode'])->name('qrcode');
+        Route::get('/{ticketId}/payment', [TicketController::class, 'paymentPage'])->name('payment');
+        Route::patch('/{ticketId}/payment/status', [Ticketcontroller::class, 'updateStatusPayment'])->name('payment.status');
+        Route::get('/{ticketId}/payment/proof', [TicketController::class, 'proofPayment'])->name('payment.proof');
+        Route::get('/{ticketId}/pdf', [TicketController::class, 'exportPdf'])->name('export_pdf');
     });
 });
-

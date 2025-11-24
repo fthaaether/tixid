@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cinema;
+use App\Models\Ticket;
 use App\Models\Movie;
 use App\Models\Schedule;
 use Illuminate\Http\Request;
@@ -219,7 +220,22 @@ class ScheduleController extends Controller
     {
         $schedule = Schedule::where('id', $scheduleId)->with('cinema')->first();
         $hour = $schedule['hours'][$hourId];
-        return view('schedule.show-seats', compact('schedule', 'hour'));
+        // ambil data kuri dengan kriteria
+        // 1. uda dibayar (ada paid_date di ticket paymernt)
+        // 2. tiket dibeli di tgl dan jam yanng seduai diklik
+
+        $seats = Ticket::where('schedule_id', $scheduleId)->whereHas('ticketPayment', function ($q) {
+            // ambil tanggal sekarang
+            $date = now()->format('Y-m-d');
+            // whereDate : mencari berrdasarkan tanggal
+            $q->whereDate('paid_date', $date);
+        })->whereTime('hour', $hour)->pluck('rows_of_seats');
+        // pluck() : mengambil data hanya satu column
+        // mengganti array dua dimensi menjadis atu dimesni
+        $seatsFormat = array_merge(...$seats);
+        // ... : spread operator, mengeularkan isi array. array_merge() menggunakan isi array. jf mengeluarkan dr dimensi kedua, digabungkan ke dimensi pertema
+        // dd($seatsFormat);
+        return view('schedule.show-seats', compact('schedule', 'hour', 'seatsFormat'));
     }
 }
 

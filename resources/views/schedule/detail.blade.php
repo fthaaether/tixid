@@ -172,7 +172,7 @@
         wrapBtn.style.backgroundColor = '#112646';
         // memanggil route web.php di JS
         // .replace() mengganti/mengisi path dinamis {scheduleId} di web.php
-        let url = "{{ route('schedules.show-seats', ['scheduleId' => ':scheduleId', 'hourId' => ':hourId']) }}".replace(':scheduleId', scheduleId).replace(':hourId', hourIndex);
+        let url = "{{ route('schedules.show_seats', ['scheduleId' => ':scheduleId', 'hourId' => ':hourId']) }}".replace(':scheduleId', scheduleId).replace(':hourId', hourIndex);
         let btnOrder = document.querySelector("#btnOrder");
         btnOrder.href = url;
         btnOrder.style.color = 'white';
