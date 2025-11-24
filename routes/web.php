@@ -21,6 +21,7 @@ Route::get('/logout', [UserController::class, 'logout'])->name('logout');
 // membuat group route dengan middlwware isAdmin,
 // prefix() : memberikan path (/) awalan, / admin ditulis 1x bisa dipake berkali kali
 Route::middleware('isAdmin')->prefix('/admin')->name('admin.')->group(function () {
+    Route::get('/tickets/chart', [TicketController::class, 'chart'])->name('tickets.chart');
     Route::get('dashboard', function () {
         return view('admin.dashboard');
     })->name('dashboard');
@@ -74,6 +75,7 @@ Route::middleware('isAdmin')->prefix('/admin')->name('admin.')->group(function (
 
     //film
     Route::prefix('/movies')->name('movies.')->group(function () {
+        Route::get('/chart', [MovieController::class, 'chart'])->name('chart');
         Route::get('/', [MovieController::class, 'index'])->name('index');
         Route::get('/create', [MovieController::class, 'create'])->name('create');
         Route::post('/store', [MovieController::class, 'store'])->name('store');
@@ -159,7 +161,7 @@ Route::middleware('isUser')->group(function () {
 
     Route::prefix('/tickets')->name('tickets.')->group(function () {
         Route::get('/', [TicketController::class, 'index'])->name('index');
-        
+
         Route::post('/', [TicketController::class, 'store'])->name('store');
         Route::get('/{ticketUd}/order', [TicketController::class, 'orderPage'])->name('order');
         Route::post('/qrcode', [TicketController::class, 'createQrcode'])->name('qrcode');

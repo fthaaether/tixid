@@ -20,17 +20,43 @@ class TicketController extends Controller
     {
         // tiket aktif : sudah dibayar da berlaku di hari ini atau besok
         // tiket sesuai dengan milik akun yg login
-        $ticketActive = Ticket::whereHas('ticketPayment', function($q) {
+        $ticketActive = Ticket::whereHas('ticketPayment', function ($q) {
             $date = now()->format('Y-m-d');
             $q->whereDate('paid_date', '>=', $date);
         })->where('user_id', Auth::user()->id)->get();
         // tiket tidak aktif : sudah dbaiayar dean berlaku do ahris kemarin (terlewat)
         // tiket sesuai dengan milik akun yg login
-        $ticketNonActive = Ticket::whereHas('ticketPayment', function($q) {
+        $ticketNonActive = Ticket::whereHas('ticketPayment', function ($q) {
             $date = now()->format('Y-m-d');
             $q->whereDate('paid_date', '<', $date);
         })->where('user_id', Auth::user()->id)->get();
         return view('ticket.index', compact('ticketActive', 'ticketNonActive'));
+    }
+
+    public function chart()
+    {
+        // ambil data tanggal untuk sumbu z dan jumla tike tuntuk sumbu y
+        $tickets = Ticket::whereHas('ticketPayment', function ($q) {
+            // ambil yang paid_date nya uda bukan (<>) null (uda bayar)
+            $q->where('paid_date', '<>', NULL);
+        })->get()->groupBy(function ($ticket) {
+            // groupBy : mengelompokkan data tiket berdasarkan tanggal pembauyaran, untuk dihitung jumlah tiket di tiap tgl nya
+            return \Carbon\Carbon::parse($ticket->ticketPayment->paid_date)->format('Y-m-d');
+        })->toArray(); // toArray() : data disajikan dalam bentuk array agar bisa menggunakan fungsi-fungsi array
+        // bentuk data : ['2025-11-10']
+        $labels = array_keys($tickets); // array_keys() : amnbil index array
+        $data = [];
+        // sumbu y mengambil jumlah value bukan isi valie, jadi gunakan count() untuk ambil jumlah   valie nya
+        foreach ($tickets as $value) {
+            // simpan jumlah value ke array diatas
+            array_push($data, count($value));
+        }
+        // dd($tickets);
+        // di proses lewat js, jadi gunakan response()->json()
+        return response()->json([
+            'labels' => $labels,
+            'data' => $data,
+        ]);
     }
 
     /**
